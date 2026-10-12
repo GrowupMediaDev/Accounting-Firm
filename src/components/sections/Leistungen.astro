@@ -1,0 +1,238 @@
+---
+// Unsere Leistungen (Figma 23:357): Kopfzeile + endloses Karten-Karussell,
+// aktive Karte mittig, Nachbarn angeschnitten und abgeblendet.
+// Bedienung: Pfeile, Ziehen/Wischen, Pfeiltasten.
+import Img from '../ui/Img.astro';
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { SECTION } from '../../config/nav';
+import { services } from '../../data/content';
+import Check from '../../assets/icons/double-check.svg';
+import Prev from '../../assets/icons/carousel-prev.svg';
+import Next from '../../assets/icons/carousel-next.svg';
+
+// Drei Durchlaeufe fuer die Endlos-Schleife; nur der mittlere ist fuer Screenreader sichtbar.
+const loop = [0, 1, 2].flatMap((set) => services.map((s, i) => ({ ...s, i, set })));
+---
+<section id={SECTION.leistungen} class="leistungen" aria-roledescription="Karussell" aria-label="Unsere Leistungen">
+  <div class="container-site flex flex-col gap-6 lg:flex-row lg:items-center lg:gap-[18px]">
+    <div class="lg:flex-[852_0_0]">
+      <Eyebrow>Unsere Leistungen</Eyebrow>
+      <h2 class="t-h2 mt-1.5 max-w-[852px]" data-split>Steuerberatung für jede Phase Ihres Unternehmens</h2>
+    </div>
+    <p class="max-w-[410px] text-black/90 lg:flex-[410_0_0] lg:text-right" data-reveal="up">
+      Von der Gründung über die laufende Buchhaltung bis zum Jahresabschluss. Wir übernehmen die Pflichten, die Ihnen Zeit kosten, und melden uns, bevor Fristen zum Problem werden.
+    </p>
+  </div>
+
+  <div class="carousel" data-carousel data-total={services.length} data-reveal="fade">
+    <div class="carousel__viewport" data-viewport tabindex="0" aria-label="Leistungen, mit Pfeiltasten wechseln">
+      <ul class="carousel__track" data-track>
+        {loop.map((s) => (
+          <li class="service-card" data-slide aria-hidden={s.set !== 1 ? 'true' : undefined}>
+            <div class="service-card__media">
+              <Img src={s.image} alt={s.alt} sizes="(min-width: 768px) 420px, 90vw" widths={[420, 840, 1260]} class="size-full object-cover" pictureClass="block size-full" />
+            </div>
+            <div class="service-card__body">
+              <div>
+                <h3 class="font-display text-[clamp(1.75rem,1.5rem+0.8vw,2.25rem)] leading-tight">{s.title}</h3>
+                <p class="mt-[7px] leading-6 tracking-[-0.02em] text-black/88">{s.text}</p>
+                <ul class="mt-7 flex flex-col gap-3.5">
+                  {s.points.map((p) => (
+                    <li class="flex items-center gap-2 leading-6 text-black/90">
+                      <Check width="18" height="18" class="shrink-0" aria-hidden="true" />{p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <Button href={`#${SECTION.termin}`} variant="accent" class="self-start" tabindex={s.set !== 1 ? -1 : undefined}>Mehr erfahren</Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="mt-[30px] flex justify-center gap-4">
+      <button type="button" class="carousel__btn" data-prev aria-label="Vorherige Leistung"><Prev width="48" height="48" /></button>
+      <button type="button" class="carousel__btn" data-next aria-label="Nächste Leistung"><Next width="48" height="48" /></button>
+    </div>
+    <p class="sr-only" aria-live="polite" data-status></p>
+  </div>
+</section>
+
+<style>
+  .leistungen {
+    padding: 250px 0 60px;
+    overflow: hidden;
+  }
+  @media (max-width: 1023px) {
+    .leistungen { padding-top: 210px; }
+  }
+
+  .carousel { margin-top: 80px; }
+  .carousel__viewport {
+    overflow: visible;
+    touch-action: pan-y;
+    cursor: grab;
+    outline-offset: 8px;
+  }
+  .carousel__viewport.is-dragging { cursor: grabbing; }
+  .carousel__track {
+    --card-w: min(850px, calc(100vw - var(--gutter) * 2));
+    display: flex;
+    gap: 20px;
+    will-change: transform;
+  }
+
+  .service-card {
+    flex: 0 0 var(--card-w);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    border: 1px solid rgb(0 0 0 / 0.2);
+    border-radius: 35px;
+    background: var(--color-paper);
+    opacity: 0.6;
+    transform: scale(0.94);
+    transition:
+      opacity 0.8s var(--ease-out-expo),
+      transform 0.8s var(--ease-out-expo);
+    user-select: none;
+  }
+  .service-card.is-active { opacity: 1; transform: scale(1); }
+  .service-card__media {
+    height: 260px;
+    overflow: hidden;
+    border-radius: 25px;
+  }
+  .service-card__media :global(img) {
+    transform: scale(1.12);
+    transition: transform 1.2s var(--ease-out-expo);
+    pointer-events: none;
+  }
+  .service-card.is-active .service-card__media :global(img) { transform: scale(1); }
+  .service-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 10px 15px 20px;
+  }
+  @media (min-width: 768px) {
+    .service-card { flex-direction: row; height: 500px; }
+    .service-card__media { flex: 0 0 395px; height: auto; }
+    .service-card__body { padding: 30px 25px; }
+  }
+
+  .carousel__btn {
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .carousel__btn:hover { transform: scale(1.08); }
+  .carousel__btn:active { transform: scale(0.94); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card, .service-card__media :global(img) { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-carousel]');
+  if (root) {
+    const viewport = root.querySelector<HTMLElement>('[data-viewport]')!;
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const n = Number(root.dataset.total);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+    let index = n; // erste Karte im mittleren Durchlauf
+    let dragX = 0;
+
+    const step = () => slides[1].offsetLeft - slides[0].offsetLeft;
+    const offsetFor = (i: number) =>
+      viewport.clientWidth / 2 - (slides[0].offsetWidth / 2 + i * step());
+
+    function render(animate = true) {
+      track.style.transition = animate && !reduce ? `transform 0.9s ${EASE}` : 'none';
+      track.style.transform = `translate3d(${offsetFor(index) + dragX}px,0,0)`;
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+      const title = slides[index].querySelector('h3')?.textContent ?? '';
+      status.textContent = `${(index % n) + 1} von ${n}: ${title}`;
+    }
+
+    // Nach dem Gleiten unsichtbar in den mittleren Durchlauf zurueckspringen.
+    track.addEventListener('transitionend', (e) => {
+      if (e.target !== track) return;
+      if (index < n || index >= 2 * n) {
+        index = (index % n) + n;
+        render(false);
+      }
+    });
+
+    const go = (d: number) => {
+      index += d;
+      render();
+    };
+    root.querySelector('[data-prev]')!.addEventListener('click', () => go(-1));
+    root.querySelector('[data-next]')!.addEventListener('click', () => go(1));
+    viewport.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+    });
+
+    // Ziehen / Wischen
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
+    let decided = false;
+    let justDragged = false;
+    viewport.addEventListener('pointerdown', (e) => {
+      justDragged = false;
+      if ((e.target as HTMLElement).closest('a, button')) return;
+      startX = e.clientX;
+      startY = e.clientY;
+      dragging = true;
+      decided = false;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (!decided) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        decided = true;
+        if (Math.abs(dy) > Math.abs(dx)) { dragging = false; return; }
+        viewport.classList.add('is-dragging');
+        justDragged = true;
+      }
+      dragX = dx;
+      render(false);
+    });
+    const end = () => {
+      if (!dragging) return;
+      dragging = false;
+      viewport.classList.remove('is-dragging');
+      const threshold = Math.min(120, step() * 0.15);
+      const d = dragX < -threshold ? 1 : dragX > threshold ? -1 : 0;
+      dragX = 0;
+      go(d);
+    };
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    // Klick auf eine Nachbarkarte holt sie in die Mitte.
+    slides.forEach((s, i) =>
+      s.addEventListener('click', (e) => {
+        if (justDragged) { justDragged = false; return; }
+        if (i !== index && !(e.target as HTMLElement).closest('a')) go(i - index);
+      }),
+    );
+
+    window.addEventListener('resize', () => render(false));
+    render(false);
+  }
+</script>

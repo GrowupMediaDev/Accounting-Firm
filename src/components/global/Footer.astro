@@ -1,0 +1,169 @@
+---
+// Footer (Figma 42:5295). Template-Platzhalter aus Figma (englische Spalten,
+// US-Adresse) sind durch die echten Seiten- und NAP-Daten ersetzt.
+import Logo from '../ui/Logo.astro';
+import { mainNav, SECTION, sectionHref } from '../../config/nav';
+import { nap, site, social } from '../../config/site';
+import { localizedPath } from '../../config/routes';
+import { services } from '../../data/content';
+import Whatsapp from '../../assets/social/whatsapp.svg';
+import Tiktok from '../../assets/social/tiktok.svg';
+import Facebook from '../../assets/social/facebook.svg';
+import Instagram from '../../assets/social/instagram.svg';
+import Linkedin from '../../assets/social/linkedin.svg';
+
+const icons = { whatsapp: Whatsapp, tiktok: Tiktok, facebook: Facebook, instagram: Instagram, linkedin: Linkedin };
+const legal = [
+  { label: 'Impressum', href: localizedPath('impressum', 'de') },
+  { label: 'Datenschutz', href: localizedPath('datenschutz', 'de') },
+];
+const telHref = `tel:${nap.phone.replace(/[^+\d]/g, '')}`;
+const year = new Date().getFullYear();
+const path = Astro.url.pathname;
+---
+<footer class="footer">
+  <div class="container-site">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[327px_repeat(4,auto)] xl:justify-between">
+      <div class="flex flex-col gap-[35px] sm:col-span-2 lg:col-span-4 xl:col-span-1 lg:max-w-[420px]">
+        <Logo tone="light" href={sectionHref(SECTION.start, path)} class="self-start" />
+        <p class="leading-6 text-white/80">{site.tagline}</p>
+        <ul class="flex gap-2.5">
+          {social.map((s) => {
+            const Icon = icons[s.key];
+            return (
+              <li>
+                <a href={s.href} class="footer__social" aria-label={s.label}>
+                  <Icon width="25" height="25" class="max-h-[25px] max-w-[25px]" aria-hidden="true" />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <nav aria-label="Footer Navigation">
+        <h2 class="footer__h">Navigation</h2>
+        <ul class="footer__list">
+          {mainNav.map((n) => <li><a href={sectionHref(n.section, path)} class="footer__link">{n.label}</a></li>)}
+          <li><a href={sectionHref(SECTION.termin, path)} class="footer__link">Kontakt</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer__h">Leistungen</h2>
+        <ul class="footer__list">
+          {services.map((s) => <li><a href={sectionHref(SECTION.leistungen, path)} class="footer__link">{s.title}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h">Rechtliches</h2>
+        <ul class="footer__list">
+          {legal.map((l) => <li><a href={l.href} class="footer__link">{l.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h">Kontakt</h2>
+        <ul class="footer__list">
+          <li><a href={telHref} class="footer__link">{nap.phone}</a></li>
+          <li><a href={`mailto:${nap.email}`} class="footer__link">{nap.email}</a></li>
+          <li class="pt-1 leading-6 text-white">{nap.street}<br />{nap.postalCode} {nap.city}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__mark" aria-hidden="true">
+      <p class="footer__word" data-footer-word>HARTMANN</p>
+    </div>
+
+    <div class="flex flex-col gap-2 border-t border-white/20 pt-[25px] text-[14px] leading-[21px] text-white sm:flex-row sm:justify-between">
+      <p>© {year} HARTMANN &amp; VOGT</p>
+      <p>Built in figma | Created by Robiu</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    background: var(--color-ink);
+    padding: 100px 0 40px;
+    color: var(--color-paper);
+  }
+  .footer__h {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 38.4px;
+  }
+  .footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 25px;
+  }
+  .footer__link {
+    position: relative;
+    display: inline-block;
+    padding-top: 4px;
+    line-height: 24px;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.6s var(--ease-out-expo), color 0.3s;
+  }
+  .footer__link:hover { background-size: 100% 1px; color: var(--color-accent); }
+  .footer__social {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background: var(--color-accent);
+    transition: transform 0.5s var(--ease-out-expo), background-color 0.4s;
+  }
+  .footer__social:hover { transform: translateY(-4px); background: var(--color-paper); }
+
+  .footer__mark {
+    container-type: inline-size;
+    margin-top: clamp(80px, 10vw, 153px);
+    overflow: hidden;
+  }
+  .footer__word {
+    font-size: 17cqi;
+    line-height: 0.8;
+    letter-spacing: 0.02em;
+    text-align: center;
+    white-space: nowrap;
+    background: linear-gradient(0deg, rgb(5 20 26 / 0.1), rgb(255 255 255 / 0.1) 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    user-select: none;
+  }
+  .footer__word :global(.footer-char) {
+    background: inherit;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { SplitText } from 'gsap/SplitText';
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  const word = document.querySelector<HTMLElement>('[data-footer-word]');
+  if (word && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.fonts.ready.then(() => {
+      const split = SplitText.create(word, { type: 'chars', charsClass: 'footer-char' });
+      gsap.from(split.chars, {
+        yPercent: 100,
+        opacity: 0,
+        duration: 1.4,
+        ease: 'expo.out',
+        stagger: 0.05,
+        scrollTrigger: { trigger: word, start: 'top 95%', once: true },
+      });
+    });
+  }
+</script>

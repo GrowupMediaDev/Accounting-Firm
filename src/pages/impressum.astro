@@ -1,0 +1,17 @@
+---
+// Impressum. PLATZHALTER: Rechtstext vom Mandanten bzw. Datenschutzberater einsetzen,
+// danach in routes.ts auf indexable: true pruefen.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/global/Header.astro';
+import Footer from '../components/global/Footer.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+---
+<Layout pageKey="impressum" locale="de" title="Impressum – Hartmann & Vogt Steuerberatung" description="Impressum der Hartmann & Vogt Steuerberatung, Düsseldorf.">
+  <Header />
+  <main class="container-site min-h-[70svh] pb-24 pt-44">
+    <Eyebrow>Rechtliches</Eyebrow>
+    <h1 class="t-h2 mt-3" data-split="load">Impressum</h1>
+    <p class="mt-8 max-w-[60ch] text-black/70">[BITTE ERGÄNZEN] Der Rechtstext folgt.</p>
+  </main>
+  <Footer />
+</Layout>

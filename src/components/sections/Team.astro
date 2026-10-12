@@ -1,0 +1,205 @@
+---
+// Team + Mandantenstimmen (Figma 27:2878): schwarzer, rundum gerundeter Block.
+import { Image } from 'astro:assets';
+import Img from '../ui/Img.astro';
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { SECTION } from '../../config/nav';
+import { team, testimonials, rating } from '../../data/content';
+import Linkedin from '../../assets/icons/linkedin.svg';
+import StarRating from '../../assets/icons/star-rating.svg';
+import Quote from '../../assets/icons/quote.svg';
+import ArrowDown from '../../assets/icons/arrow-down-md.svg';
+
+const initials = (name: string) => name.split(' ').map((p) => p[0]).slice(-2).join('');
+---
+<section id={SECTION.team} class="team">
+  <div class="container-site">
+    <!-- Team -->
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div>
+        <Eyebrow>Unser Team</Eyebrow>
+        <h2 class="t-h3 mt-3 max-w-[852px] text-white" data-split>Menschen, die Ihre Zahlen kennen</h2>
+      </div>
+      <!-- TODO: eigene Team-Seite; bis dahin fuehrt der Button zum Erstgespraech. -->
+      <div class="md:pb-[25px]" data-reveal="up"><Button href={`#${SECTION.termin}`} variant="light">Alle Mitarbeiter</Button></div>
+    </div>
+
+    <ul class="mt-[60px] grid gap-[30px] md:grid-cols-3">
+      {team.map((m) => (
+        <li class="team-card" data-reveal="up">
+          <div class="team-card__media">
+            <Img src={m.image} alt={`Porträt ${m.name}`} sizes="(min-width: 768px) 33vw, 100vw" widths={[400, 640, 900]} class="size-full object-cover" style={`object-position:${m.objectPosition}`} pictureClass="block size-full" />
+          </div>
+          <div class="flex items-start justify-between rounded-[var(--radius-media)] bg-sky p-4">
+            <div>
+              <p class="text-[20px] font-medium leading-7 tracking-[-0.02em] text-[#0a0a0b]">{m.name}</p>
+              <p class="leading-6 tracking-[-0.02em] text-[#0a0a0b]/64">{m.role}</p>
+            </div>
+            <a href={m.linkedin} class="team-card__social" aria-label={`${m.name} auf LinkedIn`}>
+              <Linkedin width="24" height="24" aria-hidden="true" />
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <!-- Mandantenstimmen -->
+    <div class="mt-[130px] grid gap-12 lg:grid-cols-2 lg:gap-[50px]" data-testimonials data-total={testimonials.length}>
+      <div class="flex flex-col justify-between gap-12">
+        <div>
+          <Eyebrow>Mandantenstimmen</Eyebrow>
+          <h2 class="t-h3 mt-2.5 text-white" data-split>Was unsere Mandanten über uns sagen</h2>
+          <p class="mt-5 max-w-[480px] text-[20px] leading-8 text-white/80" data-reveal="up">Mittelständler, Gründer und Selbstständige aus Düsseldorf und Umgebung. Seit 2009.</p>
+        </div>
+        <div class="flex items-center justify-between" data-reveal="up">
+          <p class="text-[30px] leading-10 text-white tabular-nums" aria-hidden="true">
+            <span class="relative inline-block h-10 overflow-hidden align-top"><span class="block" data-current>1</span></span> / <span class="text-white/27">{testimonials.length}</span>
+          </p>
+          <div class="flex gap-2.5">
+            <button type="button" class="t-nav" data-prev aria-label="Vorherige Stimme"><ArrowDown width="24" height="24" class="rotate-90" aria-hidden="true" /></button>
+            <button type="button" class="t-nav" data-next aria-label="Nächste Stimme"><ArrowDown width="24" height="24" class="-rotate-90" aria-hidden="true" /></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-card" data-reveal="up">
+        <div class="p-[25px] max-sm:p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-[18px]">
+              <p class="text-[48px] leading-[56px] tracking-[-0.03em] text-black">{rating.score}</p>
+              <div class="flex flex-col gap-[5px]">
+                <p class="text-[18px] leading-[29px] text-black/70">(von {rating.max} Sternen)</p>
+                <span class="flex gap-1.5 p-[3px]" role="img" aria-label={`${rating.score} von ${rating.max} Sternen`}>
+                  {Array.from({ length: 5 }).map(() => <StarRating width="17.1295" height="16.3994" aria-hidden="true" />)}
+                </span>
+              </div>
+            </div>
+            <Quote width="53" height="46.087" aria-hidden="true" class="max-sm:scale-75" />
+          </div>
+          <div class="t-slides" aria-live="polite">
+            {testimonials.map((t, i) => (
+              <blockquote class="t-slide" data-slide={i} aria-hidden={i ? 'true' : 'false'}>
+                <p class="pb-10 pt-11 text-[clamp(1.25rem,1rem+0.8vw,1.6875rem)] font-medium leading-[1.67] text-black">„{t.quote}“</p>
+              </blockquote>
+            ))}
+          </div>
+        </div>
+        <div class="t-authors">
+          {testimonials.map((t, i) => (
+            <div class="t-author" data-author={i} aria-hidden={i ? 'true' : 'false'}>
+              <div class="flex items-center gap-5">
+                {t.avatar
+                  ? <Image src={t.avatar} alt="" width={70} height={70} densities={[2]} class="size-[70px] rounded-[8px] object-cover max-sm:size-14" />
+                  : <span class="grid size-[70px] place-items-center rounded-[8px] bg-ink font-display text-2xl text-white max-sm:size-14">{initials(t.name)}</span>}
+                <div>
+                  <p class="text-[22px] font-medium leading-tight text-black">{t.name}</p>
+                  <p class="mt-2 text-[14px] text-black/70">{t.role}</p>
+                </div>
+              </div>
+              {t.logo && <Image src={t.logo} alt="" width={133} height={55} densities={[2]} class="h-[55px] w-auto object-contain brightness-0 opacity-85 max-md:hidden" />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team {
+    --eyebrow-color: var(--color-accent);
+    position: relative;
+    margin-top: 0;
+    padding-block: 100px;
+    border-radius: var(--radius-section);
+    background: var(--color-ink);
+  }
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 24px;
+    background: var(--color-paper);
+  }
+  .team-card__media {
+    height: clamp(380px, 34vw, 499px);
+    overflow: hidden;
+    border-radius: 25px;
+  }
+  .team-card__media :global(img) { transition: transform 1.2s var(--ease-out-expo); }
+  .team-card:hover .team-card__media :global(img) { transform: scale(1.05); }
+  .team-card__social {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--color-accent);
+    transition: background-color 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo);
+  }
+  .team-card__social:hover { background: var(--color-ink); transform: rotate(-6deg); }
+
+  .t-nav {
+    display: grid;
+    place-items: center;
+    padding: 14px;
+    border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    transition: background-color 0.4s var(--ease-out-expo), border-color 0.4s;
+  }
+  .t-nav:hover { background: var(--color-accent); border-color: var(--color-accent); }
+
+  .t-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 24px;
+    background: var(--color-paper);
+  }
+  .t-slides, .t-authors { display: grid; }
+  .t-slide, .t-author { grid-area: 1 / 1; }
+  .t-author {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px;
+    border-radius: var(--radius-media);
+    background: var(--color-sky);
+  }
+  .t-slide, .t-author {
+    transition: opacity 0.6s var(--ease-out-expo), transform 0.8s var(--ease-out-expo), visibility 0.8s;
+  }
+  .t-slide[aria-hidden='true'], .t-author[aria-hidden='true'] {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-testimonials]');
+  if (root) {
+    const n = Number(root.dataset.total);
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const authors = [...root.querySelectorAll<HTMLElement>('[data-author]')];
+    const current = root.querySelector<HTMLElement>('[data-current]')!;
+    let i = 0;
+    const show = (next: number) => {
+      i = (next + n) % n;
+      slides.forEach((s, j) => s.setAttribute('aria-hidden', String(j !== i)));
+      authors.forEach((a, j) => a.setAttribute('aria-hidden', String(j !== i)));
+      current.animate(
+        [{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }],
+        { duration: 600, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+      );
+      current.textContent = String(i + 1);
+    };
+    root.querySelector('[data-prev]')!.addEventListener('click', () => show(i - 1));
+    root.querySelector('[data-next]')!.addEventListener('click', () => show(i + 1));
+  }
+</script>

@@ -1,0 +1,125 @@
+---
+// Die Kanzlei (Figma 22:233): schwarze Sektion mit runder Unterkante,
+// Kennzahlen-Leiste und drei Karten, die ueber die Kante hinausragen.
+import { Image } from 'astro:assets';
+import Img from '../ui/Img.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import IconTile from '../ui/IconTile.astro';
+import { SECTION } from '../../config/nav';
+import { stats } from '../../data/content';
+import laptop from '../../assets/images/kanzlei-laptop.png';
+import scales from '../../assets/icons/scales.png';
+import scan from '../../assets/icons/scan.png';
+---
+<section id={SECTION.kanzlei} class="kanzlei">
+  <div class="container-site">
+    <header class="mx-auto flex max-w-[730px] flex-col items-center text-center">
+      <Eyebrow>Die Kanzlei</Eyebrow>
+      <h2 class="t-h2 mt-3 text-white" data-split>Steuerberatung, die mitdenkt statt abrechnet</h2>
+      <p class="mt-6 max-w-[500px] text-white/80" data-reveal="up">
+        Ob GmbH-Gründung, laufende Buchhaltung oder Jahresabschluss: Sie haben einen festen Ansprechpartner, der Ihr Unternehmen kennt und nicht jedes Mal neu einliest.
+      </p>
+    </header>
+
+    <ul class="kanzlei__stats">
+      {stats.map((s, i) => (
+        <Fragment>
+          {i > 0 && <li class="kanzlei__divider" aria-hidden="true"></li>}
+          <li class="kanzlei__stat" data-reveal="up">
+            <p class="t-stat text-white" data-counter>{s.value}</p>
+            <p class="text-accent">{s.label}</p>
+          </li>
+        </Fragment>
+      ))}
+    </ul>
+
+    <div class="kanzlei__cards">
+      <article class="kanzlei-card bg-paper" data-reveal="up">
+        <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+        <div>
+          <h3 class="t-h5">Fester Ansprechpartner</h3>
+          <p class="mt-3 text-black/60">Sie sprechen immer mit derselben Person. Kein Ticketsystem, keine Warteschleife, keine Erklärungen von vorn.</p>
+        </div>
+      </article>
+
+      <div class="kanzlei-media" data-reveal="image" data-radius="10px">
+        <Img src={laptop} alt="Steuerberater arbeitet konzentriert am Laptop im Büro" sizes="(min-width: 1024px) 420px, 100vw" class="size-full object-cover" pictureClass="block size-full" />
+      </div>
+
+      <article class="kanzlei-card bg-accent" data-reveal="up">
+        <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+        <div>
+          <h3 class="t-h5 text-white">Feste Monatspauschale</h3>
+          <p class="mt-3 text-white/60">Sie wissen vorab, was die Betreuung kostet. Keine Überraschungen auf der Rechnung, keine Abrechnung nach Zeit.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kanzlei {
+    --eyebrow-color: var(--color-accent);
+    position: relative;
+    z-index: 1;
+    background: var(--color-ink);
+    border-radius: 0 0 var(--radius-section) var(--radius-section);
+    padding-top: 80px;
+  }
+  @media (min-width: 1024px) {
+    .kanzlei { padding-top: 0; }
+  }
+
+  .kanzlei__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 24px;
+    margin-top: 70px;
+  }
+  .kanzlei__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .kanzlei__divider { display: none; }
+  @media (min-width: 1024px) {
+    .kanzlei__stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      gap: 0;
+    }
+    .kanzlei__divider {
+      display: block;
+      width: 1px;
+      background: rgb(255 255 255 / 0.6);
+    }
+  }
+
+  .kanzlei__cards {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 12px;
+    margin-top: 70px;
+    margin-bottom: -130px;
+  }
+  @media (min-width: 1024px) {
+    .kanzlei__cards { grid-template-columns: 1fr minmax(0, 0.955fr) 1fr; }
+  }
+  .kanzlei-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 80px;
+    min-height: 354px;
+    padding: 32px;
+    border-radius: var(--radius-card);
+  }
+  .kanzlei-media {
+    position: relative;
+    height: 354px;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+</style>

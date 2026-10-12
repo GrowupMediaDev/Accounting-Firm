@@ -1,0 +1,191 @@
+---
+// Warum wir (Figma 26:2569): links fixierte Spalte mit Ueberschrift und Reitern,
+// rechts stapeln sich die Karten beim Scrollen. Der Reiter folgt der Karte,
+// Klick auf einen Reiter scrollt zur Karte.
+import Img from '../ui/Img.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { reasons } from '../../data/content';
+---
+<section class="warum container-site" data-warum>
+  <div class="warum__aside">
+    <div>
+      <Eyebrow>Warum wir</Eyebrow>
+      <h2 class="mt-3 font-display text-[clamp(2.25rem,1.6rem+2vw,3rem)] leading-tight text-balance" data-split>Was uns von der Kanzlei nebenan trennt</h2>
+    </div>
+    <ul class="warum__tabs" role="list">
+      {reasons.map((r, i) => (
+        <li>
+          <button type="button" class="warum-tab" data-tab={i} aria-current={i === 0 ? 'true' : 'false'}>
+            <img src={r.icon} alt="" width="20" height="20" class="warum-tab__icon" />
+            {r.tab}
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <ol class="warum__stack">
+    {reasons.map((r, i) => (
+      <li class="warum-card" data-card={i} style={`--i:${i}`}>
+        <div class="warum-card__inner" data-card-inner>
+          <div class="warum-card__media">
+            <Img src={r.image} alt={r.alt} sizes="(min-width: 1024px) 320px, 90vw" widths={[400, 640, 960]} class="size-full object-cover" pictureClass="block size-full" />
+          </div>
+          <div class="warum-card__body">
+            <div>
+              <h3 class="font-display text-[30px] leading-[44px] text-[#0a0a0b]">{r.title}</h3>
+              <p class="mt-2.5 leading-6 tracking-[-0.02em] text-[#0a0a0b]/80">{r.text}</p>
+            </div>
+            <div class="mt-8 rounded-[var(--radius-media)] bg-sky p-[15px] leading-6 tracking-[-0.02em]">
+              <p class="font-medium">{r.detailTitle}</p>
+              <p class="mt-1.5 text-black/70">{r.detail}</p>
+            </div>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .warum {
+    display: grid;
+    gap: 48px;
+    padding-block: 85px;
+  }
+  .warum__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .warum__tabs { display: none; }
+
+  .warum__stack {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .warum-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 35px;
+    background: var(--color-paper);
+    transform-origin: 50% 0;
+    will-change: transform;
+  }
+  .warum-card__media {
+    height: 280px;
+    overflow: hidden;
+    border-radius: 25px;
+  }
+  .warum-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 14px 14px;
+  }
+
+  /* Zeilen-Layout erst, wenn die Karte selbst breit genug ist (nicht der Viewport). */
+  @container (min-width: 620px) {
+    .warum-card__inner { flex-direction: row; height: 560px; }
+    .warum-card__media { flex: 0 0 320px; height: auto; }
+    .warum-card__body { padding: 32px 20px; }
+  }
+
+  @media (min-width: 1024px) {
+    .warum {
+      grid-template-columns: minmax(0, 537fr) minmax(0, 733fr);
+      gap: 50px;
+      align-items: start;
+    }
+    .warum__aside {
+      position: sticky;
+      top: 120px;
+      height: calc(100svh - 200px);
+      max-height: 1024px;
+      justify-content: space-between;
+    }
+    .warum__tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .warum-card {
+      position: sticky;
+      top: calc(120px + var(--i) * 18px);
+    }
+  }
+
+  .warum-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 64px;
+    padding: 20px;
+    border-radius: var(--radius-media);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #0a0a0b;
+    cursor: pointer;
+    transition:
+      background-color 0.5s var(--ease-out-expo),
+      color 0.5s var(--ease-out-expo),
+      padding 0.5s var(--ease-out-expo);
+  }
+  /* Erstes Icon ist weiss (aktiver Zustand in Figma), die anderen dunkel. */
+  .warum-tab__icon { transition: filter 0.5s var(--ease-out-expo); }
+  li:first-child .warum-tab__icon { filter: invert(1); }
+  .warum-tab[aria-current='true'] { background: var(--color-ink); color: var(--color-paper); }
+  .warum-tab[aria-current='true'] .warum-tab__icon { filter: invert(1); }
+  li:first-child .warum-tab[aria-current='true'] .warum-tab__icon { filter: none; }
+  .warum-tab:not([aria-current='true']):hover { background: rgb(0 0 0 / 0.05); padding-left: 26px; }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const root = document.querySelector<HTMLElement>('[data-warum]');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
+    const setActive = (i: number) => tabs.forEach((t, j) => t.setAttribute('aria-current', String(i === j)));
+
+    tabs.forEach((t, i) =>
+      t.addEventListener('click', () => {
+        const lenis = (window as unknown as { lenis?: { scrollTo(el: Element, o: object): void } }).lenis;
+        const top = 120 + i * 18;
+        if (lenis) lenis.scrollTo(cards[i], { offset: -top, duration: 1.2 });
+        else cards[i].scrollIntoView({ behavior: 'smooth' });
+      }),
+    );
+
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px)', () => {
+      cards.forEach((card, i) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onToggle: (self) => self.isActive && setActive(i),
+        });
+        // Vorige Karte tritt zurueck, sobald die naechste darueber gleitet.
+        const next = cards[i + 1];
+        const inner = card.querySelector('[data-card-inner]');
+        if (next && inner && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          gsap.to(inner, {
+            scale: 0.94,
+            opacity: 0.85,
+            ease: 'none',
+            scrollTrigger: { trigger: next, start: 'top bottom', end: `top ${120 + (i + 1) * 18}px`, scrub: true },
+          });
+        }
+      });
+    });
+  }
+</script>

@@ -1,0 +1,193 @@
+---
+// Interne Design-System-Uebersicht (noindex). Zeigt Tokens, Typo, Bausteine und Motion.
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/global/Header.astro';
+import Button from '../components/ui/Button.astro';
+import ArrowTile from '../components/ui/ArrowTile.astro';
+import CtaPair from '../components/ui/CtaPair.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import IconTile from '../components/ui/IconTile.astro';
+import scales from '../assets/icons/scales.png';
+import scan from '../assets/icons/scan.png';
+import { SECTION } from '../config/nav';
+
+const colors = [
+  { name: 'sky', value: '#E0EFF3', note: 'Seitenhintergrund, Hero-Huelle', cls: 'bg-sky ring-1 ring-black/10' },
+  { name: 'ink', value: '#000000', note: 'Text, dunkle Sektionen, Buttons', cls: 'bg-ink' },
+  { name: 'accent', value: '#CB530A', note: 'Kennzeilen, Hervorhebung, CTA', cls: 'bg-accent' },
+  { name: 'paper', value: '#FFFFFF', note: 'Karten, helle Buttons', cls: 'bg-paper ring-1 ring-black/10' },
+  { name: 'ink-soft', value: '#222222', note: 'Bewertungstext', cls: 'bg-ink-soft' },
+];
+
+const type = [
+  { token: 't-display', spec: 'Georgia 96 / 96', sample: 'Steuern ohne Aktenordner' },
+  { token: 't-h2', spec: 'Georgia 64 / 76', sample: 'Steuerberatung, die mitdenkt statt abrechnet' },
+  { token: 't-stat', spec: 'Georgia 54', sample: '180+' },
+  { token: 't-h5', spec: 'Georgia 32 / 42', sample: 'Fester Ansprechpartner' },
+  { token: 't-body', spec: 'Inter 16 / 26', sample: 'Wir betreuen Mittelstand und Selbstständige in Düsseldorf. Vollständig digital, mit festem Ansprechpartner und festem Monatshonorar.' },
+  { token: 't-small', spec: 'Inter 14 / 24', sample: 'Immer auf dem aktuellen Stand' },
+  { token: 't-eyebrow', spec: 'Inter Medium 16 / 28, uppercase', sample: 'Digitale Steuerberatung' },
+];
+
+const radii = [
+  { name: 'btn', px: 6 },
+  { name: 'card', px: 10 },
+  { name: 'media', px: 16 },
+  { name: 'section', px: 38 },
+];
+---
+<Layout
+  pageKey="styleguide"
+  locale="de"
+  title="Design System – Hartmann & Vogt"
+  description="Interne Übersicht der Design-Tokens, Typografie, Bausteine und Animationen."
+>
+  <Header />
+
+  <main>
+    <!-- Intro -->
+    <section id={SECTION.start} class="container-site pb-24 pt-44">
+      <Eyebrow>Design System</Eyebrow>
+      <h1 class="t-display mt-3 max-w-[16ch]" data-split="load">Hartmann &amp; Vogt Steuerberatung</h1>
+      <p class="t-body mt-6 max-w-[42ch] text-black/70" data-reveal="up" data-reveal-delay="0.4">
+        Tokens, Typografie, Bausteine und Motion aus dem Figma-File „Accountant“. Alles, was die Sektionen später verwenden, ist hier einmal zu sehen.
+      </p>
+    </section>
+
+    <!-- Farben -->
+    <section id={SECTION.kanzlei} class="container-site border-t border-black/10 py-20">
+      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+        <div>
+          <Eyebrow>01 Farben</Eyebrow>
+          <h2 class="t-h5 mt-2" data-split>Fünf Farben, ein Akzent</h2>
+        </div>
+        <ul class="grid grid-cols-2 gap-3 md:grid-cols-5">
+          {colors.map((c) => (
+            <li data-reveal="up">
+              <div class:list={['aspect-[4/5] rounded-[var(--radius-card)]', c.cls]}></div>
+              <p class="mt-3 font-medium">{c.name}</p>
+              <p class="t-small text-black/60 tabular-nums">{c.value}</p>
+              <p class="t-small text-black/60">{c.note}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Typografie -->
+    <section id={SECTION.leistungen} class="container-site border-t border-black/10 py-20">
+      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+        <div>
+          <Eyebrow>02 Typografie</Eyebrow>
+          <h2 class="t-h5 mt-2" data-split>Georgia trifft Inter</h2>
+          <p class="t-small mt-3 max-w-[30ch] text-black/60" data-reveal="up">
+            Fluide Größen: Figma-Werte bei 1440 px, sauber herunterskaliert bis 390 px.
+          </p>
+        </div>
+        <ul class="divide-y divide-black/10">
+          {type.map((t) => (
+            <li class="grid gap-3 py-8 first:pt-0 md:grid-cols-[180px_1fr]" data-reveal="up">
+              <div class="t-small">
+                <p class="font-medium">.{t.token}</p>
+                <p class="text-black/60">{t.spec}</p>
+              </div>
+              <p class={t.token}>{t.sample}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bausteine -->
+    <section id={SECTION.team} class="container-site border-t border-black/10 py-20">
+      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+        <div>
+          <Eyebrow>03 Bausteine</Eyebrow>
+          <h2 class="t-h5 mt-2" data-split>Buttons &amp; Kacheln</h2>
+          <p class="t-small mt-3 max-w-[30ch] text-black/60" data-reveal="up">Mit der Maus darüberfahren: Farbwisch, Label-Roll, Pfeil-Wechsel.</p>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="flex flex-wrap items-center gap-2.5 rounded-[var(--radius-card)] bg-paper p-8" data-reveal="up">
+            <Button href={`#${SECTION.termin}`}>Erstgespräch vereinbaren</Button>
+            <Button href={`#${SECTION.leistungen}`} variant="light" class="ring-1 ring-black/10">Leistungen ansehen</Button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5 rounded-[var(--radius-card)] bg-ink p-8" data-reveal="up">
+            <Button variant="accent">Erstgespräch vereinbaren</Button>
+            <Button variant="light">Alle Mitarbeiter</Button>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] bg-paper p-8" data-reveal="up">
+            <CtaPair href={`#${SECTION.termin}`} label="Termin vereinbaren" />
+            <ArrowTile href={`#${SECTION.termin}`} label="Termin vereinbaren" />
+            <ArrowTile href={`#${SECTION.termin}`} label="Termin vereinbaren" variant="dark" />
+          </div>
+          <div class="flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] bg-paper p-8" data-reveal="up">
+            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+            <span class="t-small text-black/60">IconTile, 56 × 52</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-6 rounded-[var(--radius-card)] bg-paper p-8 md:col-span-2" data-reveal="up">
+            {radii.map((r) => (
+              <div class="text-center">
+                <div class="size-20 bg-sky ring-1 ring-black/10" style={`border-radius:${r.px}px`}></div>
+                <p class="t-small mt-2">{r.name} · {r.px}px</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Motion -->
+    <section id={SECTION.aktuelles} class="mt-10 rounded-t-[var(--radius-section)] bg-ink py-24 text-paper">
+      <div class="container-site">
+        <div class="mx-auto max-w-[730px] text-center">
+          <Eyebrow>04 Motion</Eyebrow>
+          <h2 class="t-h2 mt-3" data-split>Bewegung, die Ruhe ausstrahlt</h2>
+          <p class="t-body mx-auto mt-6 max-w-[500px] text-white/80" data-reveal="up">
+            Lenis-Smooth-Scroll, Zeilen-Reveals für Headlines, gestaffelte Einblendungen, Bild-Masken, Parallaxe und Zähler. Alles über data-Attribute, respektiert „Bewegung reduzieren“.
+          </p>
+        </div>
+
+        <div class="mt-20 grid grid-cols-2 gap-y-10 lg:grid-cols-4 lg:divide-x lg:divide-white/20">
+          {[
+            ['15 Jahre', 'Erfahrung in der Beratung'],
+            ['40+', 'Steuerberater im Team'],
+            ['180+', 'Betreute Mandanten'],
+            ['24 Std.', 'Reaktionszeit werktags'],
+          ].map(([n, l]) => (
+            <div class="flex flex-col gap-[15px] lg:px-12 lg:first:pl-0 lg:last:pr-0" data-reveal="up">
+              <p class="t-stat" data-counter>{n}</p>
+              <p class="text-accent">{l}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="mt-20 grid gap-3 md:grid-cols-3">
+          <div class="relative h-[354px] overflow-hidden rounded-[var(--radius-card)] bg-accent" data-reveal="image" data-radius="10px">
+            <div class="absolute inset-[-15%] bg-[radial-gradient(circle_at_30%_30%,#e88a4f,transparent_60%)]" data-parallax="0.12"></div>
+            <p class="t-small absolute bottom-6 left-8">data-reveal="image" + data-parallax</p>
+          </div>
+          <div class="flex h-[354px] flex-col justify-between rounded-[var(--radius-card)] bg-paper p-8 text-ink" data-reveal="up">
+            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+            <div>
+              <h3 class="t-h5">Fester Ansprechpartner</h3>
+              <p class="mt-3 text-black/60">Sie sprechen immer mit derselben Person. Kein Ticketsystem, keine Warteschleife.</p>
+            </div>
+          </div>
+          <div class="flex h-[354px] flex-col justify-between rounded-[var(--radius-card)] bg-accent p-8" data-reveal="up">
+            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+            <div>
+              <h3 class="t-h5">Feste Monatspauschale</h3>
+              <p class="mt-3 text-white/60">Sie wissen vorab, was die Betreuung kostet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id={SECTION.termin} class="mt-24 flex justify-center pb-10">
+          <Button variant="accent" magnetic>Erstgespräch vereinbaren</Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

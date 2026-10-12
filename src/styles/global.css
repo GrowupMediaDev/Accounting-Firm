@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/*
+ * Design-Tokens Hartmann & Vogt (aus Figma "Accountant").
+ * @theme macht sie als Utilities verfuegbar (bg-sky, text-accent, font-display ...).
+ */
+@theme {
+  /* Farben */
+  --color-sky: #e0eff3;
+  --color-sky-deep: #cfe4ea;
+  --color-ink: #000000;
+  --color-ink-soft: #222222;
+  --color-paper: #ffffff;
+  --color-accent: #cb530a;
+  --color-accent-deep: #a94408;
+  /* Akzent als kleine Schrift auf hellem Grund (Kontrast 4.8:1 statt 3.7:1). */
+  --color-accent-ink: #b04607;
+
+  /* Schriften. Georgia ist lokal auf macOS/Windows vorhanden; Gelasio ist der
+     metrisch kompatible, self-hostete Ersatz und laedt nur, wo Georgia fehlt. */
+  --font-display: Georgia, "Gelasio", "Times New Roman", serif;
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Radien */
+  --radius-btn: 6px;
+  --radius-card: 10px;
+  --radius-media: 16px;
+  --radius-section: 38px;
+
+  /* Layout */
+  --container-site: 1320px;
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* ----- Fluide Typo-Skala (Figma-Werte bei 1440px, skaliert bis 390px) ----- */
+:root {
+  --fs-display: clamp(3rem, 1.89rem + 4.571vw, 6rem);       /* 96 */
+  --fs-h2: clamp(2.375rem, 1.77rem + 2.476vw, 4rem);        /* 64 / 76 */
+  --fs-h3: clamp(2.25rem, 1.76rem + 2vw, 3.75rem);           /* 60 */
+  --fs-stat: clamp(2.5rem, 2.175rem + 1.333vw, 3.375rem);   /* 54 */
+  --fs-h5: clamp(1.625rem, 1.486rem + 0.571vw, 2rem);       /* 32 / 42 */
+  --gutter: clamp(1.25rem, 0.4rem + 3.5vw, 3.75rem);        /* 60 bei 1440 */
+  --section-y: clamp(5rem, 3rem + 6vw, 8.75rem);
+  --header-h: 52px;
+}
+
+/* ----- Base ----- */
+html {
+  background: var(--color-sky);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-sky);
+  font-size: 1rem;
+  line-height: 1.625; /* 16 / 26 */
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* In @layer base, damit Tailwind-Utilities (z. B. hidden) gewinnen. */
+@layer base {
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* ----- Layout ----- */
+@utility container-site {
+  width: 100%;
+  max-width: calc(var(--container-site) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ----- Typografie ----- */
+@utility t-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-display);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+@utility t-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.1875;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+@utility t-h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+@utility t-stat {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-stat);
+  line-height: 1.15;
+  font-variant-numeric: lining-nums;
+}
+@utility t-h5 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--fs-h5);
+  line-height: 1.3125;
+}
+@utility t-body {
+  font-size: 1rem;
+  line-height: 1.625;
+}
+@utility t-small {
+  font-size: 0.875rem;
+  line-height: 1.7143;
+}
+@utility t-eyebrow {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.75;
+  text-transform: uppercase;
+  color: var(--eyebrow-color, var(--color-accent-ink));
+}
+
+/* ----- Motion: Startzustaende nur mit JS und ohne reduced-motion ----- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+  }
+  html.js [data-reveal="image"] {
+    opacity: 1;
+    clip-path: inset(100% 0 0 0 round var(--radius-media));
+  }
+  html.js [data-split] {
+    visibility: hidden;
+  }
+}
+
+.split-line {
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}

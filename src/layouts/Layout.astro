@@ -1,0 +1,75 @@
+---
+// Basis-Layout: nur Kopf-Plumbing (Canonical, hreflang, OG, Twitter) + <slot/>.
+// KEIN festes Design, kein Header/Footer erzwungen. Das kommt pro Projekt.
+import { site } from '../config/site';
+import { routes, localizedPath, hasEN, type PageKey } from '../config/routes';
+import type { Locale } from '../config/site';
+import '@fontsource-variable/inter';
+import '@fontsource/gelasio/400.css';
+import '../styles/global.css';
+
+interface Props {
+  pageKey: PageKey;
+  locale: Locale;
+  title: string;
+  description: string;
+  ogImage?: string;
+}
+
+const { pageKey, locale, title, description, ogImage } = Astro.props;
+const route = routes[pageKey];
+
+const canonical = new URL(localizedPath(pageKey, locale), site.url).href;
+const deHref = new URL(localizedPath(pageKey, 'de'), site.url).href;
+const enHref = hasEN(pageKey) ? new URL(localizedPath(pageKey, 'en'), site.url).href : null;
+const ogImg = new URL(ogImage ?? site.ogImage, site.url).href;
+
+// hreflang nur, wenn EN existiert UND die Seite indexierbar ist.
+const showHreflang = hasEN(pageKey) && route.indexable;
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e0eff3" />
+    <!-- TODO Favicon: ueber realfavicongenerator.net erzeugen. Bis dahin leeres Icon gegen den 404. -->
+    <link rel="icon" href="data:," />
+    <script is:inline>
+      // Motion-Startzustaende nur mit JS. Faellt das Modul aus, nach 2,5 s alles zeigen.
+      document.documentElement.classList.add('js');
+      setTimeout(function () { if (!window.__motion) document.documentElement.classList.remove('js'); }, 2500);
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    {route.indexable
+      ? <link rel="canonical" href={canonical} />
+      : <meta name="robots" content="noindex, follow" />}
+
+    {showHreflang && [
+      <link rel="alternate" hreflang="de" href={deHref} />,
+      enHref && <link rel="alternate" hreflang="en" href={enHref} />,
+      <link rel="alternate" hreflang="x-default" href={deHref} />,
+    ]}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImg} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImg} />
+
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+---
+// Wortmarke Hartmann & Vogt. Bildmarke als SVG-Asset aus Figma (Node 49:52).
+import LogoMark from '../../assets/brand/logo-mark.svg';
+
+interface Props {
+  href?: string;
+  class?: string;
+  tone?: 'dark' | 'light';
+}
+
+const { href = '#start', class: className, tone = 'dark' } = Astro.props;
+const light = tone === 'light';
+---
+<a href={href} class:list={['logo group inline-flex items-center gap-2.5', className]}>
+  <LogoMark width="39.4018" height="45" class="logo-mark shrink-0" aria-hidden="true" />
+  <span class="flex flex-col items-center gap-2 whitespace-nowrap">
+    <span class:list={['font-display text-[18px] leading-none', light ? 'text-white/96' : 'text-black/96']}>HARTMANN &amp; VOGT</span>
+    <span class:list={['text-[10px] leading-none tracking-[4px]', light ? 'text-white/70' : 'text-black/57']}>STEUERBERATUNG</span>
+  </span>
+  <span class="sr-only">, zur Startseite</span>
+</a>
+
+<style>
+  .logo-mark :global(path) {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transition: transform 0.7s var(--ease-out-expo);
+  }
+  .logo:hover .logo-mark :global(path:nth-child(1)) { transform: scaleY(0.86); }
+  .logo:hover .logo-mark :global(path:nth-child(2)) { transform: scaleY(0.92); transition-delay: 0.04s; }
+  .logo:hover .logo-mark :global(path:nth-child(3)) { transform: scaleY(0.8); transition-delay: 0.08s; }
+</style>

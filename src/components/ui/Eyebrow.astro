@@ -1,0 +1,10 @@
+---
+// Orangefarbene Sektions-Kennzeile ("DIE KANZLEI", "UNSERE LEISTUNGEN" ...).
+interface Props {
+  as?: 'p' | 'span' | 'h2';
+  class?: string;
+  reveal?: boolean;
+}
+const { as: Tag = 'p', class: className, reveal = true } = Astro.props;
+---
+<Tag class:list={['t-eyebrow', className]} data-reveal={reveal ? 'up' : undefined}><slot /></Tag>

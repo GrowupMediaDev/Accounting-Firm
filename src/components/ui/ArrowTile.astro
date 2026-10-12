@@ -1,0 +1,41 @@
+---
+// Quadratische Pfeil-Kachel (Figma 16:6744): 50x50, Akzent, Radius 6.
+// Als eigenstaendiger Link oder als Teil eines CtaPair (dann as="span").
+import Arrow from './Arrow.astro';
+
+interface Props {
+  href?: string;
+  as?: 'a' | 'span' | 'button';
+  variant?: 'accent' | 'dark';
+  label?: string;
+  class?: string;
+}
+
+const { href, as, variant = 'accent', label, class: className } = Astro.props;
+const Tag = as ?? (href ? 'a' : 'span');
+---
+<Tag
+  href={Tag === 'a' ? href : undefined}
+  aria-label={Tag !== 'span' ? label : undefined}
+  class:list={['arrow-tile has-arrow', `arrow-tile--${variant}`, className]}
+>
+  <Arrow />
+</Tag>
+
+<style>
+  .arrow-tile {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-btn);
+    background: var(--color-accent);
+    transition: background-color 0.5s var(--ease-out-expo);
+  }
+  .arrow-tile--dark { background: var(--color-ink); }
+  @media (hover: hover) {
+    a.arrow-tile:hover, button.arrow-tile:hover { background: var(--color-accent-deep); }
+    a.arrow-tile--dark:hover, button.arrow-tile--dark:hover { background: var(--color-accent); }
+  }
+</style>

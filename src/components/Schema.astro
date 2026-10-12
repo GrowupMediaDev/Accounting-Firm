@@ -1,0 +1,95 @@
+---
+// Zentrales JSON-LD. pageKey -> Schema-Typ (aus der Registry).
+// LocalBusiness wird genau EINMAL voll definiert (feste @id), alle anderen
+// Seiten referenzieren es via provider: { "@id": ... }. Nicht pro Seite duplizieren.
+// Prinzip: Schema speist sich aus denselben Daten wie der sichtbare Text.
+import { site, nap } from '../config/site';
+import { routes, localizedPath, type PageKey } from '../config/routes';
+import type { Locale } from '../config/site';
+
+interface Props {
+  pageKey: PageKey;
+  locale: Locale;
+  // sichtbarer Inhalt der Seite, aus derselben Quelle wie das Markup:
+  name?: string;
+  description?: string;
+  // Sichtbares FAQ-Akkordeon auf der Seite: dieselben Daten -> FAQPage-Fragment.
+  faq?: { q: string; a: string }[];
+}
+
+const { pageKey, locale, name, description, faq } = Astro.props;
+const route = routes[pageKey];
+const url = new URL(localizedPath(pageKey, locale), site.url).href;
+const businessId = `${site.url}/#business`;
+
+const areaServed = nap.areaServed.map((a) => ({ '@type': a.type, name: a.name }));
+
+function localBusiness() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': site.businessType,
+    '@id': businessId,
+    name: site.name,
+    legalName: nap.legalName,
+    url: site.url,
+    telephone: nap.phone,
+    email: nap.email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: nap.street,
+      postalCode: nap.postalCode,
+      addressLocality: nap.city,
+      addressRegion: nap.region,
+      addressCountry: nap.country,
+    },
+    areaServed,
+  };
+}
+
+let node: Record<string, unknown> | null = null;
+switch (route.schema) {
+  case 'LocalBusiness':
+    node = localBusiness();
+    break;
+  case 'Service':
+  case 'ServiceItemList':
+    node = {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: name ?? site.name,
+      description,
+      url,
+      provider: { '@id': businessId },
+      areaServed,
+    };
+    break;
+  case 'Vehicle':
+    // Nur mit echtem Fahrzeug-Datensatz. Sonst in der Registry auf 'Service' setzen.
+    node = { '@context': 'https://schema.org', '@type': 'Vehicle', name, url, provider: { '@id': businessId } };
+    break;
+  case 'TouristTrip':
+    node = { '@context': 'https://schema.org', '@type': 'TouristTrip', name, description, url, provider: { '@id': businessId } };
+    break;
+  case 'FAQPage':
+    // FAQ-Daten aus derselben Quelle wie das sichtbare Akkordeon uebergeben.
+    node = null; // pro Projekt aus den echten Q&A befuellen
+    break;
+  case 'None':
+  default:
+    node = null;
+}
+
+const faqNode = faq?.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }
+  : null;
+---
+{faqNode && <script type="application/ld+json" is:inline set:html={JSON.stringify(faqNode)} />}
+{node && <script type="application/ld+json" is:inline set:html={JSON.stringify(node)} />}

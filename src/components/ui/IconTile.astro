@@ -1,0 +1,10 @@
+---
+// Schwarze Icon-Kachel (Figma 22:289): 56x52, Radius 6, Icon 24px im Slot.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+<span class:list={['inline-grid h-[52px] w-14 shrink-0 place-items-center rounded-[var(--radius-btn)] bg-ink text-paper', className]} aria-hidden="true">
+  <span class="grid size-6 place-items-center"><slot /></span>
+</span>
