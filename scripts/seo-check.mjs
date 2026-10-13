@@ -18,7 +18,7 @@ import { join, extname } from 'node:path';
 
 const WARN_ONLY = process.env.SEO_CHECK === 'warn';
 const SCAN_DIRS = ['src', 'functions'];
-const SCAN_EXT = new Set(['.astro', '.ts', '.tsx', '.js', '.mjs', '.jsx', '.md']);
+const SCAN_EXT = new Set(['.astro', '.ts', '.tsx', '.js', '.mjs', '.jsx', '.md', '.json']); // .json: Kanzlei-Profile (src/firms)
 
 const errors = [];
 const warnings = [];

@@ -4,9 +4,19 @@
 import { site } from '../config/site';
 import { routes, localizedPath, hasEN, type PageKey } from '../config/routes';
 import type { Locale } from '../config/site';
-import '@fontsource-variable/inter';
+import '@fontsource/instrument-serif/latin-400.css';
+import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource-variable/instrument-sans';
 import '@fontsource/gelasio/400.css';
+import '../styles/fonts-gambarino.css';
 import '../styles/global.css';
+import { firm } from '../config/firm';
+import { themeCss, themeColors } from '../config/theme';
+import gambarinoUrl from '../assets/fonts/Gambarino-Regular.woff2?url';
+// Display- und Textschrift vorladen: verhindert Layout-Spruenge beim Schriftwechsel (CLS).
+import serifUrl from '@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2?url';
+import serifItalicUrl from '@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2?url';
+import sansUrl from '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2?url';
 
 interface Props {
   pageKey: PageKey;
@@ -14,9 +24,13 @@ interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  /** Hero mit Vollflaechen-Foto: Header startet mit heller Schrift. */
+  heroPhoto?: boolean;
 }
 
-const { pageKey, locale, title, description, ogImage } = Astro.props;
+const { pageKey, locale, title, description, ogImage, heroPhoto = false } = Astro.props;
+// Display-Schrift aus dem Profil: nur die gewaehlte wird vorgeladen.
+const font = firm.theme.displayFont === 'gambarino' ? 'gambarino' : 'instrument-serif';
 const route = routes[pageKey];
 
 const canonical = new URL(localizedPath(pageKey, locale), site.url).href;
@@ -28,18 +42,32 @@ const ogImg = new URL(ogImage ?? site.ogImage, site.url).href;
 const showHreflang = hasEN(pageKey) && route.indexable;
 ---
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-font={font} data-hero={heroPhoto ? 'photo' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#e0eff3" />
+    <meta name="theme-color" content={themeColors.sky} />
+    {font === 'gambarino'
+      ? <link rel="preload" href={gambarinoUrl} as="font" type="font/woff2" crossorigin />
+      : [<link rel="preload" href={serifUrl} as="font" type="font/woff2" crossorigin />,
+         <link rel="preload" href={serifItalicUrl} as="font" type="font/woff2" crossorigin />]}
+    <link rel="preload" href={sansUrl} as="font" type="font/woff2" crossorigin />
     <!-- TODO Favicon: ueber realfavicongenerator.net erzeugen. Bis dahin leeres Icon gegen den 404. -->
     <link rel="icon" href="data:," />
     <script is:inline>
       // Motion-Startzustaende nur mit JS. Faellt das Modul aus, nach 2,5 s alles zeigen.
       document.documentElement.classList.add('js');
+      // Preloader nur beim ersten Seitenaufruf der Sitzung und nie bei Direktlinks
+      // auf eine Sektion (z. B. #termin aus einer Mail): dort zaehlt der Inhalt.
+      // ?intro erzwingt ihn zum Ansehen/Testen (z. B. localhost:4380/?intro).
+      try {
+        if (/[?&]intro\b/.test(location.search)) sessionStorage.removeItem('hv-seen');
+        else if (location.hash || sessionStorage.getItem('hv-seen')) document.documentElement.classList.add('hv-seen');
+      } catch (e) {}
       setTimeout(function () { if (!window.__motion) document.documentElement.classList.remove('js'); }, 2500);
     </script>
+    <!-- Farbschema aus dem Kanzlei-Profil -->
+    <style set:html={themeCss}></style>
     <title>{title}</title>
     <meta name="description" content={description} />
 

@@ -1,6 +1,13 @@
 ---
-// Wortmarke Hartmann & Vogt. Bildmarke als SVG-Asset aus Figma (Node 49:52).
-import LogoMark from '../../assets/brand/logo-mark.svg';
+// Logo aus dem Kanzlei-Profil: Bildmarke (SVG inline oder Rasterbild) plus
+// optionaler zweizeiliger Wortmarke (leer = nur Bildmarke), ODER ein komplettes
+// Logo-Bild (ersetzt beides).
+// Auf dunklem Grund (tone="light") die helle Logo-Variante; fehlt sie, wird das
+// Logo-Bild weiss eingefaerbt.
+import { Image } from 'astro:assets';
+import { img, logoMark } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
 
 interface Props {
   href?: string;
@@ -10,17 +17,39 @@ interface Props {
 
 const { href = '#start', class: className, tone = 'dark' } = Astro.props;
 const light = tone === 'light';
+const b = firm.brand;
+const full = b.logoImage ? img(light && b.logoImageLight ? b.logoImageLight : b.logoImage) : null;
+const mark = full ? null : logoMark();
+const Mark = mark?.svg as any;
 ---
 <a href={href} class:list={['logo group inline-flex items-center gap-2.5', className]}>
-  <LogoMark width="39.4018" height="45" class="logo-mark shrink-0" aria-hidden="true" />
-  <span class="flex flex-col items-center gap-2 whitespace-nowrap">
-    <span class:list={['font-display text-[18px] leading-none', light ? 'text-white/96' : 'text-black/96']}>HARTMANN &amp; VOGT</span>
-    <span class:list={['text-[10px] leading-none tracking-[4px]', light ? 'text-white/70' : 'text-black/57']}>STEUERBERATUNG</span>
-  </span>
-  <span class="sr-only">, zur Startseite</span>
+  {full ? (
+    <Image src={full} alt="" height={56} densities={[1, 2]} class:list={['logo-full', light && !b.logoImageLight && 'logo-full--invert']} />
+  ) : (
+    <>
+      {Mark ? <Mark width="2.4626rem" height="2.8125rem" class:list={['logo-mark shrink-0', b.tintMark && 'logo-mark--tint']} aria-hidden="true" /> : <Image src={mark!.image!} alt="" height={45} densities={[1, 2]} class="logo-mark logo-mark--img shrink-0" />}
+      {b.wordmark && <span class="logo-word flex flex-col items-center gap-2 whitespace-nowrap">
+        <span class:list={['logo-word__main font-brand leading-none', light ? 'text-white/96' : 'text-black/96']}>{b.wordmark}</span>
+        {b.wordmarkSub && <span class:list={['logo-word__sub leading-none', light ? 'text-white/70' : 'text-black/57']}>{b.wordmarkSub}</span>}
+      </span>}
+    </>
+  )}
+  <span class="sr-only">{b.shortName}, {t('homeLink')}</span>
 </a>
 
 <style>
+  /* Wortmarke: auf schmalen Handys etwas kleiner (390px ~17px, 360px ~15.5px). */
+  .logo-word__main { font-size: clamp(0.875rem, 4.3vw, 1.125rem); }
+  .logo-word__sub { font-size: 0.625rem; letter-spacing: clamp(0.15rem, 1vw, 0.25rem); }
+  @media (max-width: 399px) {
+    .logo { gap: 0.5rem; }
+    .logo-mark { width: 2.125rem; height: auto; }
+  }
+  .logo-full { display: block; width: auto; height: 2.8125rem; max-width: 14rem; object-fit: contain; object-position: left center; }
+  .logo-full--invert { filter: brightness(0) invert(1); }
+  .logo-mark--img { width: auto; height: 2.8125rem; }
+  /* Einfarbige SVG-Marke folgt der Akzentfarbe des Profils. */
+  .logo-mark--tint :global(path) { fill: var(--color-accent); }
   .logo-mark :global(path) {
     transform-box: fill-box;
     transform-origin: 50% 100%;

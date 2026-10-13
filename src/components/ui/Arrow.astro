@@ -9,7 +9,7 @@ interface Props {
 }
 const { size = 24 } = Astro.props;
 ---
-<span class="arrow relative block overflow-hidden" style={`width:${size}px;height:${size}px`} aria-hidden="true">
+<span class="arrow relative block overflow-hidden" style={`width:${size / 16}rem;height:${size / 16}rem`} aria-hidden="true">
   <Image src={arrow} alt="" width={size} height={size} densities={[2, 3]} class="arrow-a absolute inset-0 size-full" />
   <Image src={arrow} alt="" width={size} height={size} densities={[2, 3]} class="arrow-b absolute inset-0 size-full" />
 </span>

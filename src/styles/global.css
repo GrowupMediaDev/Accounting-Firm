@@ -16,19 +16,23 @@
   /* Akzent als kleine Schrift auf hellem Grund (Kontrast 4.8:1 statt 3.7:1). */
   --color-accent-ink: #b04607;
 
-  /* Schriften. Georgia ist lokal auf macOS/Windows vorhanden; Gelasio ist der
-     metrisch kompatible, self-hostete Ersatz und laedt nur, wo Georgia fehlt. */
-  --font-display: Georgia, "Gelasio", "Times New Roman", serif;
-  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Schriften: Instrument Serif (Display, mit Kursive als Akzent) + Instrument Sans.
+     Die Wortmarke im Logo bleibt Georgia (Markenbestandteil). */
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-sans: "Instrument Sans Variable", "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-brand: Georgia, "Gelasio", "Times New Roman", serif;
 
-  /* Radien */
-  --radius-btn: 6px;
-  --radius-card: 10px;
-  --radius-media: 16px;
-  --radius-section: 38px;
+  /* Radien: feste Skala, ueberall nur diese vier Stufen.
+     btn 6 = Buttons, Icon-Kacheln | sm 10 = kleine Elemente, verschachtelte Bilder
+     card 16 = Karten, Fotos | section 32 (mobil 24) = Hero-Huelle, Sektionsecken */
+  --radius-btn: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-card: 1rem;
+  --radius-media: 1rem;
+  --radius-section: 2rem;
 
   /* Layout */
-  --container-site: 1320px;
+  --container-site: 82.5rem;
 
   /* Easing */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -38,17 +42,23 @@
 
 /* ----- Fluide Typo-Skala (Figma-Werte bei 1440px, skaliert bis 390px) ----- */
 :root {
-  --fs-display: clamp(3rem, 1.89rem + 4.571vw, 6rem);       /* 96 */
-  --fs-h2: clamp(2.375rem, 1.77rem + 2.476vw, 4rem);        /* 64 / 76 */
-  --fs-h3: clamp(2.25rem, 1.76rem + 2vw, 3.75rem);           /* 60 */
-  --fs-stat: clamp(2.5rem, 2.175rem + 1.333vw, 3.375rem);   /* 54 */
-  --fs-h5: clamp(1.625rem, 1.486rem + 0.571vw, 2rem);       /* 32 / 42 */
+  --fs-display: clamp(3.25rem, 1.857rem + 5.714vw, 7rem);   /* 112 */
+  --fs-h2: clamp(2.5rem, 1.757rem + 3.048vw, 4.5rem);        /* 72 */
+  --fs-h3: clamp(2.375rem, 1.771rem + 2.476vw, 4rem);        /* 64 */
+  --fs-stat: clamp(2.75rem, 2.286rem + 1.905vw, 4rem);       /* 64 */
+  --fs-h5: clamp(1.75rem, 1.564rem + 0.762vw, 2.25rem);      /* 36 */
   --gutter: clamp(1.25rem, 0.4rem + 3.5vw, 3.75rem);        /* 60 bei 1440 */
   --section-y: clamp(5rem, 3rem + 6vw, 8.75rem);
-  --header-h: 52px;
+  --header-h: 3.25rem;
+}
+
+@media (max-width: 767px) {
+  :root { --radius-section: 1.5rem; }
 }
 
 /* ----- Base ----- */
+/* Ab 1440px waechst die Root-Schrift leicht mit dem Viewport, ab 1800px wird
+   zusaetzlich der Inhaltsbereich breiter. */
 html {
   background: var(--color-sky);
   color: var(--color-ink);
@@ -57,6 +67,15 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 1440px) {
+  /* Gedaempft: 1920 -> ~17.9px (+12 %), Deckel 20px (+25 %) ab ~2440px. */
+  html { font-size: min(20px, calc(16px + (100vw - 1440px) * 0.004)); }
+}
+/* Grosse Screens: mehr Breite statt mehr Zoom. */
+@media (min-width: 1800px) {
+  :root { --container-site: 88rem; }
 }
 
 body {
@@ -74,7 +93,7 @@ body {
 
 :focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+  outline-offset: 0.1875rem;
   border-radius: 2px;
 }
 
@@ -107,41 +126,53 @@ html.lenis body {
 }
 
 /* ----- Typografie ----- */
+/* Ueberschriften: Zeilen fuellen (pretty) statt frueh umbrechen (balance);
+   pretty verhindert nur ein einzelnes Wort in der letzten Zeile. */
 @utility t-display {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--fs-display);
-  line-height: 1;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
 }
 @utility t-h2 {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--fs-h2);
-  line-height: 1.1875;
-  letter-spacing: -0.005em;
-  text-wrap: balance;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
 }
 @utility t-h3 {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--fs-h3);
-  line-height: 1.15;
-  text-wrap: balance;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
 }
 @utility t-stat {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--fs-stat);
-  line-height: 1.15;
+  line-height: 1;
+  letter-spacing: -0.02em;
   font-variant-numeric: lining-nums;
+}
+/* Kartentitel in der Grotesk (Kanzlei-Karten, Aktuelles): die Serife bleibt den grossen Zeilen. */
+@utility t-title {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
 }
 @utility t-h5 {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--fs-h5);
-  line-height: 1.3125;
+  line-height: 1.12;
 }
 @utility t-body {
   font-size: 1rem;
@@ -171,6 +202,15 @@ html.lenis body {
   html.js [data-split] {
     visibility: hidden;
   }
+}
+
+/* Kursive Akzentwoerter in Ueberschriften: <em> in Instrument Serif Italic.
+   (Gambarino als Profil-Schrift stellt sie aufrecht, siehe styles/fonts-gambarino.css.) */
+:where(h1, h2, h3, .t-display, .t-h2, .t-h3) em {
+  font-style: italic;
+  /* Akzentphrase ("jede Phase") bricht nie in sich um. */
+  white-space: nowrap;
+  color: var(--eyebrow-color, var(--color-accent-ink));
 }
 
 .split-line {

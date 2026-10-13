@@ -5,16 +5,25 @@
 import Logo from '../ui/Logo.astro';
 import CtaPair from '../ui/CtaPair.astro';
 import ArrowTile from '../ui/ArrowTile.astro';
-import { mainNav, primaryCta, sectionHref, SECTION } from '../../config/nav';
+import { navFor, primaryCtaFor, sectionHref, SECTION } from '../../config/nav';
+import { nap, telHref as tel } from '../../config/site';
+import { hasEnglish } from '../../config/firm';
+import { localizedPath } from '../../config/routes';
+import { useI18n } from '../../i18n';
 
+const { t, locale } = useI18n(Astro.url);
 const path = Astro.url.pathname;
+const mainNav = navFor(locale);
+const primaryCta = primaryCtaFor(locale);
 const ctaHref = sectionHref(primaryCta.section, path);
+// Sprachumschalter (nur wenn das Profil Englisch eingeschaltet hat).
+const langs = hasEnglish ? (['de', 'en'] as const).map((l) => ({ l, href: localizedPath('home', l), current: l === locale })) : [];
 ---
 <header class="site-header" data-header>
   <div class="site-header__bar">
     <Logo href={sectionHref(SECTION.start, path)} />
 
-    <nav class="site-header__nav" aria-label="Hauptnavigation">
+    <nav class="site-header__nav" aria-label={t('mainNav')}>
       <ul class="flex items-center gap-5">
         {mainNav.map((item) => (
           <li>
@@ -24,10 +33,15 @@ const ctaHref = sectionHref(primaryCta.section, path);
             </a>
           </li>
         ))}
+        {langs.length > 0 && (
+          <li class="lang" aria-label={t('language')}>
+            {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} aria-current={current ? 'true' : undefined}>{l.toUpperCase()}</a>)}
+          </li>
+        )}
       </ul>
     </nav>
 
-    <div class="flex items-center justify-end gap-2 lg:w-[296px]">
+    <div class="flex items-center justify-end gap-2 lg:w-[18.5rem]">
       <CtaPair href={ctaHref} label={primaryCta.label} class="max-lg:hidden" />
       <div class="flex items-center gap-2 lg:hidden">
         <ArrowTile href={ctaHref} label={primaryCta.label} />
@@ -38,7 +52,7 @@ const ctaHref = sectionHref(primaryCta.section, path);
           aria-controls="mobile-menu"
           data-menu-toggle
         >
-          <span class="sr-only" data-menu-label>Menü öffnen</span>
+          <span class="sr-only" data-menu-label data-open-text={t('menuClose')} data-closed-text={t('menuOpen')}>{t('menuOpen')}</span>
           <span class="menu-toggle__line menu-toggle__line--a" aria-hidden="true"></span>
           <span class="menu-toggle__line menu-toggle__line--b" aria-hidden="true"></span>
         </button>
@@ -47,7 +61,7 @@ const ctaHref = sectionHref(primaryCta.section, path);
   </div>
 
   <div id="mobile-menu" class="mobile-menu lg:hidden" data-menu hidden>
-    <nav aria-label="Mobile Navigation" class="flex flex-1 flex-col justify-center">
+    <nav aria-label={t('mobileNav')} class="flex flex-1 flex-col justify-center">
       <ul class="flex flex-col gap-1">
         {mainNav.map((item, i) => (
           <li class="overflow-hidden">
@@ -60,6 +74,12 @@ const ctaHref = sectionHref(primaryCta.section, path);
     </nav>
     <div class="mobile-menu__foot" data-menu-item style={`--i:${mainNav.length}`}>
       <CtaPair href={ctaHref} label={primaryCta.label} />
+      <a href={tel} class="mobile-menu__tel">{t('orCall')} <span>{nap.phone}</span></a>
+      {langs.length > 0 && (
+        <p class="lang lang--menu" aria-label={t('language')}>
+          {langs.map(({ l, href, current }) => <a href={href} hreflang={l} lang={l} aria-current={current ? 'true' : undefined}>{l.toUpperCase()}</a>)}
+        </p>
+      )}
     </div>
   </div>
 </header>
@@ -69,7 +89,7 @@ const ctaHref = sectionHref(primaryCta.section, path);
     position: fixed;
     inset: 0 0 auto 0;
     z-index: 50;
-    padding: 30px calc(var(--gutter) - 10px) 0;
+    padding: 1.875rem calc(var(--gutter) - 0.625rem) 0;
     pointer-events: none;
     transition: transform 0.7s var(--ease-out-expo), padding 0.6s var(--ease-out-expo);
   }
@@ -78,10 +98,10 @@ const ctaHref = sectionHref(primaryCta.section, path);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: calc(var(--container-site) + 20px);
+    max-width: calc(var(--container-site) + 1.25rem);
     height: var(--header-h);
     margin-inline: auto;
-    padding: 0 10px;
+    padding: 0 0.625rem;
     border-radius: var(--radius-card);
     border: 1px solid transparent;
     transition:
@@ -97,25 +117,27 @@ const ctaHref = sectionHref(primaryCta.section, path);
   }
 
   /* Gescrollt: schwebende Glas-Leiste */
-  .site-header.is-scrolled { padding-top: 10px; }
+  .site-header.is-scrolled { padding-top: 0.625rem; }
   .site-header.is-scrolled .site-header__bar {
-    height: 68px;
-    padding: 0 9px 0 16px;
+    height: 4.25rem;
+    padding: 0 0.5625rem 0 1rem;
     background: color-mix(in srgb, var(--color-sky) 90%, transparent);
     border-color: rgb(255 255 255 / 0.6);
-    box-shadow: 0 10px 40px -20px rgb(0 0 0 / 0.25);
-    -webkit-backdrop-filter: blur(16px) saturate(1.4);
-    backdrop-filter: blur(16px) saturate(1.4);
+    box-shadow: 0 0.625rem 2.5rem -1.25rem rgb(0 0 0 / 0.25);
+    -webkit-backdrop-filter: blur(1rem) saturate(1.4);
+    backdrop-filter: blur(1rem) saturate(1.4);
   }
   .site-header.is-hidden:not(.is-open) { transform: translateY(-120%); }
+  /* Passt die Wortmarke nicht neben die Buttons (lange Kanzleinamen), nur die Bildmarke. */
+  .site-header.is-compact .site-header__bar > :global(.logo .logo-word) { display: none; }
 
   /* Nav-Link: Text rollt, Linie zeichnet sich von links */
   .nav-link {
     position: relative;
     display: block;
-    height: 26px;
+    height: 1.625rem;
     overflow: hidden;
-    line-height: 26px;
+    line-height: 1.625rem;
   }
   .nav-link__text {
     position: relative;
@@ -148,26 +170,35 @@ const ctaHref = sectionHref(primaryCta.section, path);
     .nav-link:hover .nav-link__line { transform: scaleX(1); transform-origin: left; }
   }
 
+  /* Ueber einem Hero-Foto (html[data-hero=photo]): helle Schrift, bis die
+     Glas-Leiste beim Scrollen erscheint oder das Menue offen ist. */
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) .site-header__bar { color: var(--color-paper); }
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) :global(.logo-word__main) { color: var(--color-paper); }
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) :global(.logo-word__sub) { color: rgb(255 255 255 / 0.75); }
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) .site-header__nav .lang { border-left-color: rgb(255 255 255 / 0.3); }
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) .site-header__nav .lang a { color: rgb(255 255 255 / 0.6); }
+  :global(html[data-hero='photo']) .site-header:not(.is-scrolled):not(.is-open) .site-header__nav .lang a[aria-current='true'] { color: var(--color-paper); }
+
   /* Menue-Button */
   .menu-toggle {
     position: relative;
     display: grid;
     place-items: center;
-    width: 50px;
-    height: 50px;
+    width: 3.125rem;
+    height: 3.125rem;
     border-radius: var(--radius-btn);
     background: var(--color-ink);
     cursor: pointer;
   }
   .menu-toggle__line {
     position: absolute;
-    width: 20px;
+    width: 1.25rem;
     height: 1.5px;
     background: var(--color-paper);
     transition: transform 0.5s var(--ease-out-expo);
   }
-  .menu-toggle__line--a { transform: translateY(-4px); }
-  .menu-toggle__line--b { transform: translateY(4px); }
+  .menu-toggle__line--a { transform: translateY(-0.25rem); }
+  .menu-toggle__line--b { transform: translateY(0.25rem); }
   .is-open .menu-toggle__line--a { transform: rotate(45deg); }
   .is-open .menu-toggle__line--b { transform: rotate(-45deg); }
 
@@ -179,7 +210,7 @@ const ctaHref = sectionHref(primaryCta.section, path);
     z-index: -1;
     display: flex;
     flex-direction: column;
-    padding: calc(var(--header-h) + 60px) var(--gutter) 40px;
+    padding: calc(var(--header-h) + 3.75rem) var(--gutter) 2.5rem;
     background: var(--color-sky);
     clip-path: inset(0 0 100% 0);
     transition: clip-path 0.8s var(--ease-in-out-expo);
@@ -188,16 +219,25 @@ const ctaHref = sectionHref(primaryCta.section, path);
   .is-open .mobile-menu { clip-path: inset(0 0 0 0); }
   .mobile-menu__link {
     display: block;
-    padding-block: 6px;
+    padding-block: 0.375rem;
     font-family: var(--font-display);
     font-size: clamp(2.5rem, 10vw, 3.5rem);
     line-height: 1.1;
     transform: translateY(105%);
     transition: transform 0.9s var(--ease-out-expo);
   }
+  /* Sprachumschalter: aktuelle Sprache voll, die andere gedimmt. */
+  .lang { display: flex; align-items: center; gap: 0.625rem; font-size: 0.875rem; letter-spacing: 0.04em; }
+  .site-header__nav .lang { padding-left: 1.25rem; border-left: 1px solid rgb(0 0 0 / 0.15); }
+  .lang a { color: rgb(0 0 0 / 0.45); transition: color 0.3s; }
+  .lang a:hover, .lang a[aria-current='true'] { color: var(--color-ink); }
+  .lang a[aria-current='true'] { font-weight: 500; }
+  .lang--menu { margin-top: 1.5rem; font-size: 1rem; }
+  .mobile-menu__tel { display: block; margin-top: 1.25rem; font-size: 0.9375rem; color: rgb(0 0 0 / 0.6); }
+  .mobile-menu__tel span { color: var(--color-ink); text-decoration: underline; text-underline-offset: 0.2em; }
   .mobile-menu__foot {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(1.25rem);
     transition: opacity 0.6s, transform 0.9s var(--ease-out-expo);
   }
   .is-open .mobile-menu__link,
@@ -219,6 +259,21 @@ const ctaHref = sectionHref(primaryCta.section, path);
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
+
+  // Wortmarke nur zeigen, wenn sie mit Abstand neben die Buttons passt.
+  const bar = header?.querySelector<HTMLElement>('.site-header__bar');
+  const logo = bar?.querySelector<HTMLElement>('.logo');
+  const word = logo?.querySelector<HTMLElement>('.logo-word');
+  const controls = bar?.lastElementChild as HTMLElement | null;
+  if (header && bar && logo && word && controls) {
+    const fit = () => {
+      header.classList.remove('is-compact');
+      const gap = controls.getBoundingClientRect().left - logo.getBoundingClientRect().right;
+      header.classList.toggle('is-compact', gap < 12);
+    };
+    new ResizeObserver(fit).observe(bar);
+    document.fonts?.ready.then(fit);
+  }
 
   if (header && toggle && menu && label) {
     // Scroll-Zustand: Glas-Leiste ab 40px, ausblenden beim Runterscrollen ab 400px.
@@ -246,7 +301,7 @@ const ctaHref = sectionHref(primaryCta.section, path);
     const lenis = () => (window as unknown as { lenis?: LenisLike }).lenis;
     const setOpen = (open: boolean) => {
       toggle.setAttribute('aria-expanded', String(open));
-      label.textContent = open ? 'Menü schließen' : 'Menü öffnen';
+      label.textContent = (open ? label.dataset.openText : label.dataset.closedText) ?? '';
       if (open) {
         menu.hidden = false;
         requestAnimationFrame(() => requestAnimationFrame(() => header.classList.add('is-open')));

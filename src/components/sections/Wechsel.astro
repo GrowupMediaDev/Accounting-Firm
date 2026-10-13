@@ -1,36 +1,48 @@
 ---
-// CTA "Wechseln ist einfacher" (Figma 41:4724): schwarze Buehne mit runder
+// CTA "Gute Beratung beginnt mit einem Gespraech" (Figma 41:4724): schwarze Buehne mit runder
 // Oberkante. Die zwei Haende fahren beim Scrollen aufeinander zu und
-// uebergeben die Unterlagen. Ziel aller "Erstgespraech"-Buttons der Seite.
+// uebergeben die Unterlagen. Hintergrund: oben schwarz, ab der Mitte der Haende
+// das animierte Muster aus dem Profil (WebGL, src/scripts/chevron-shader.ts), das
+// zur Footer-Kante in Schwarz auslaeuft; der Footer bleibt einfarbig. Ziel aller "Erstgespraech"-Buttons der Seite.
 import Img from '../ui/Img.astro';
 import Button from '../ui/Button.astro';
 import { SECTION } from '../../config/nav';
-import { nap } from '../../config/site';
-import handGiving from '../../assets/images/hand-giving.png';
-import handReceiving from '../../assets/images/hand-receiving.png';
+import { nap, telHref } from '../../config/site';
+import { img } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
+import { pattern } from '../../config/pattern';
 
-const mail = `mailto:${nap.email}?subject=${encodeURIComponent('Erstgespräch')}`;
+const c = firm.cta;
+// Vorbefuellte Mail: Interessenten muessen nur noch die Luecken fuellen.
+const mail = `mailto:${nap.email}?subject=${encodeURIComponent(fill(c.mailSubject))}&body=${encodeURIComponent(fill(c.mailBody))}`;
 ---
 <section id={SECTION.termin} class="wechsel" data-wechsel>
-  <div class="wechsel__bg" aria-hidden="true"></div>
+  {pattern.type !== 'none' && (
+    <canvas class="wechsel__shader" data-shader data-pattern={pattern.index} data-intensity={pattern.intensity} data-color={pattern.rgb} data-bg={pattern.bg} style={`--pattern-svg:${pattern.svg}`} aria-hidden="true"></canvas>
+  )}
 
   <div class="wechsel__hands" aria-hidden="true">
     <div class="wechsel__hand" data-hand="giving">
-      <Img src={handGiving} alt="" sizes="100vw" widths={[800, 1440, 2000, 2444]} class="size-full object-cover" pictureClass="block size-full" />
+      <Img src={img(c.handGiving)} alt="" sizes="100vw" widths={[800, 1440, 2000, 2444]} class="size-full object-cover" pictureClass="block size-full" />
     </div>
     <div class="wechsel__hand" data-hand="receiving">
-      <Img src={handReceiving} alt="" sizes="100vw" widths={[800, 1440, 2000, 2444]} class="size-full object-cover" pictureClass="block size-full" />
+      <Img src={img(c.handReceiving)} alt="" sizes="100vw" widths={[800, 1440, 2000, 2444]} class="size-full object-cover" pictureClass="block size-full" />
     </div>
   </div>
 
-  <div class="container-site relative flex flex-col items-center text-center">
-    <h2 class="max-w-[862px] font-display text-[clamp(2.6rem,1.55rem+4.2vw,5.07rem)] leading-[1.15] text-balance text-white" data-split>Wechseln ist einfacher, als Sie denken</h2>
-    <p class="mt-4 max-w-[558px] text-[clamp(1.125rem,1rem+0.4vw,1.35rem)] leading-[1.63] text-white/80" data-reveal="up">
-      Sie kündigen, wir übernehmen die Übergabe. Auch mitten im Jahr, ohne dass eine Frist reißt.
+  <div class="wechsel__content container-site relative flex flex-col items-center text-center">
+    <h2 class="max-w-[53.875rem] font-display text-[clamp(3rem,1.6rem+5.6vw,6.5rem)] leading-[0.98] text-balance text-white" data-split set:html={rich(c.heading)} />
+    <p class="mt-6 max-w-[34.875rem] text-[clamp(1.125rem,1rem+0.4vw,1.35rem)] leading-[1.63] text-white/80" data-reveal="up">
+      {fill(c.text)}
     </p>
-    <div class="mt-16 lg:mt-[100px]" data-reveal="up">
-      <Button href={mail} variant="accent" magnetic>Erstgespräch vereinbaren</Button>
+    <div class="mt-10 flex flex-wrap justify-center gap-2.5" data-reveal="up">
+      <Button href={mail} variant="accent">{c.button}</Button>
+      <Button href={telHref} variant="light" aria-label={`${t('call')}: ${nap.phone}`}>{nap.phone}</Button>
     </div>
+    <ul class="wechsel__facts" data-reveal="up">
+      {c.facts.map((f) => <li>{fill(f)}</li>)}
+    </ul>
   </div>
 </section>
 
@@ -40,31 +52,31 @@ const mail = `mailto:${nap.email}?subject=${encodeURIComponent('Erstgespräch')}
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    margin-top: -200px;
-    padding: 240px 0 150px;
-    border: 3px solid #1b1b1b;
-    border-bottom: 0;
+    /* Ueberlappung: die Aktuelles-Karten ragen tief herein (Figma). */
+    margin-top: -12.5rem;
+    padding: 15rem 0 7.5rem;
     border-radius: var(--radius-section) var(--radius-section) 0 0;
     background: var(--color-ink);
   }
   @media (min-width: 1024px) {
-    .wechsel { margin-top: -350px; padding-top: 500px; }
+    .wechsel { margin-top: -21.875rem; padding-top: 31.25rem; }
   }
 
-  /* Rautenmuster in Akzentfarbe, nach oben ausgeblendet (Figma: dunkles Muster unter dem Text). */
-  .wechsel__bg {
+  /* Shader ab der Mitte der Haende bis zur Footer-Kante. Lage und Hoehe setzt
+     chevron-shader.ts pixelgenau; die Werte hier gelten nur ohne WebGL. */
+  .wechsel__shader {
     position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10'%3E%3Cpath d='M0 9 7 2l7 7' fill='none' stroke='%23cb530a' stroke-opacity='.32' stroke-width='1.2'/%3E%3C/svg%3E");
-    -webkit-mask-image: linear-gradient(180deg, transparent 30%, #000 62%, #000 88%, transparent);
-    mask-image: linear-gradient(180deg, transparent 30%, #000 62%, #000 88%, transparent);
+    left: 0;
+    top: 30%;
+    z-index: -2;
+    width: 100%;
+    height: 70%;
   }
-  .wechsel__bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(60% 40% at 50% 92%, rgb(0 0 0 / 0.75), transparent 70%);
+  /* Ohne WebGL: dasselbe Muster statisch (SVG aus config/pattern.ts), nach oben ausgeblendet. */
+  .wechsel__shader:global(.no-gl) {
+    background-image: var(--pattern-svg);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000);
+    mask-image: linear-gradient(180deg, transparent, #000);
   }
 
   .wechsel__hands {
@@ -72,22 +84,62 @@ const mail = `mailto:${nap.email}?subject=${encodeURIComponent('Erstgespräch')}
     display: grid;
     width: 100%;
     aspect-ratio: 2444 / 1100;
-    margin-bottom: clamp(-120px, -6vw, -40px);
+    margin-bottom: clamp(-7.5rem, -6vw, -2.5rem);
   }
   .wechsel__hand { grid-area: 1 / 1; will-change: transform; }
+
+  /* Vertrauens-Zeile unter den Kontaktwegen */
+  .wechsel__facts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1.75rem;
+    font-size: 0.9375rem;
+    color: rgb(255 255 255 / 0.66);
+  }
+  .wechsel__facts li { display: flex; align-items: center; gap: 0.5rem; }
+  .wechsel__facts li::before {
+    content: '';
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
 </style>
 
 <script>
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { initChevronField } from '../../scripts/chevron-shader';
   gsap.registerPlugin(ScrollTrigger);
 
   const root = document.querySelector<HTMLElement>('[data-wechsel]');
-  if (root && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const giving = root.querySelector('[data-hand="giving"]');
-    const receiving = root.querySelector('[data-hand="receiving"]');
-    const st = { trigger: root.querySelector('.wechsel__hands'), start: 'top 95%', end: 'center 55%', scrub: 1 };
-    gsap.fromTo(giving, { xPercent: -28, rotate: -4 }, { xPercent: 0, rotate: 0, ease: 'power2.out', scrollTrigger: st });
-    gsap.fromTo(receiving, { xPercent: 26, rotate: 5 }, { xPercent: 0, rotate: 0, ease: 'power2.out', scrollTrigger: st });
+  if (root) {
+    // Muster ab der Mitte der Haende, laeuft zur Footer-Kante in Schwarz aus.
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-shader]');
+    const hands = root.querySelector<HTMLElement>('.wechsel__hands');
+    if (canvas && hands) {
+      initChevronField(canvas, () => {
+        const h = hands.getBoundingClientRect();
+        const r = root.getBoundingClientRect();
+        return { from: h.top + h.height * 0.5 + scrollY, to: r.bottom + scrollY };
+      });
+    }
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const giving = root.querySelector('[data-hand="giving"]');
+      const receiving = root.querySelector('[data-hand="receiving"]');
+      // Laengerer Scroll-Weg, damit man die Uebergabe miterlebt. Mobil sind die
+      // Haende flach (~175px), dort laeuft es von Eintritt bis ins obere Viertel.
+      gsap.matchMedia().add({ mobile: '(max-width: 767px)', desktop: '(min-width: 768px)' }, (ctx) => {
+        const { mobile } = ctx.conditions as { mobile: boolean };
+        const st = mobile
+          ? { trigger: hands, start: 'top bottom', end: 'bottom 25%', scrub: 1.2 }
+          : { trigger: hands, start: 'top 90%', end: 'center 35%', scrub: 1.2 };
+        gsap.fromTo(giving, { xPercent: -28, rotate: -4 }, { xPercent: 0, rotate: 0, ease: 'none', scrollTrigger: st });
+        gsap.fromTo(receiving, { xPercent: 26, rotate: 5 }, { xPercent: 0, rotate: 0, ease: 'none', scrollTrigger: st });
+      });
+    }
   }
 </script>

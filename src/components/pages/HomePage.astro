@@ -1,0 +1,42 @@
+---
+// Startseite (One-Pager aus Figma "Accountant") in der Sprache der URL.
+// Genutzt von pages/index.astro (DE) und pages/en/index.astro (EN).
+import Layout from '../../layouts/Layout.astro';
+import Schema from '../Schema.astro';
+import Header from '../global/Header.astro';
+import Preloader from '../global/Preloader.astro';
+import Footer from '../global/Footer.astro';
+import Hero from '../sections/Hero.astro';
+import Kanzlei from '../sections/Kanzlei.astro';
+import Leistungen from '../sections/Leistungen.astro';
+import Ansatz from '../sections/Ansatz.astro';
+import WarumWir from '../sections/WarumWir.astro';
+import Team from '../sections/Team.astro';
+import Faq from '../sections/Faq.astro';
+import Aktuelles from '../sections/Aktuelles.astro';
+import Wechsel from '../sections/Wechsel.astro';
+import { useI18n } from '../../i18n';
+
+const { f: firm, fill, locale } = useI18n(Astro.url);
+const title = fill(firm.seo.title);
+const description = fill(firm.seo.description);
+// FAQ-Schema aus denselben Daten wie das sichtbare Akkordeon.
+const faqs = firm.faq.show ? firm.faq.items.map((f) => ({ q: fill(f.q), a: fill(f.a) })) : undefined;
+---
+<Layout pageKey="home" locale={locale} title={title} description={description} heroPhoto={firm.hero.layout === 'photo' && Boolean(firm.hero.photo)}>
+  <Schema slot="head" pageKey="home" locale={locale} faq={faqs} />
+  <Preloader />
+  <Header />
+  <main>
+    <Hero />
+    <Kanzlei />
+    <Leistungen />
+    {firm.ansatz.show && <Ansatz />}
+    {firm.warum.show && <WarumWir />}
+    {(firm.team.show || firm.testimonials.show) && <Team />}
+    {firm.faq.show && <Faq />}
+    {firm.news.show && <Aktuelles />}
+    <Wechsel />
+  </main>
+  <Footer />
+</Layout>

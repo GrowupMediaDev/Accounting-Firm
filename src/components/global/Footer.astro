@@ -2,10 +2,11 @@
 // Footer (Figma 42:5295). Template-Platzhalter aus Figma (englische Spalten,
 // US-Adresse) sind durch die echten Seiten- und NAP-Daten ersetzt.
 import Logo from '../ui/Logo.astro';
-import { mainNav, SECTION, sectionHref } from '../../config/nav';
-import { nap, site, social } from '../../config/site';
+import { navFor, SECTION, sectionHref } from '../../config/nav';
+import { nap, site, social, telHref } from '../../config/site';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
 import { localizedPath } from '../../config/routes';
-import { services } from '../../data/content';
 import Whatsapp from '../../assets/social/whatsapp.svg';
 import Tiktok from '../../assets/social/tiktok.svg';
 import Facebook from '../../assets/social/facebook.svg';
@@ -14,72 +15,72 @@ import Linkedin from '../../assets/social/linkedin.svg';
 
 const icons = { whatsapp: Whatsapp, tiktok: Tiktok, facebook: Facebook, instagram: Instagram, linkedin: Linkedin };
 const legal = [
-  { label: 'Impressum', href: localizedPath('impressum', 'de') },
-  { label: 'Datenschutz', href: localizedPath('datenschutz', 'de') },
+  { label: t('imprint'), href: localizedPath('impressum', locale) },
+  { label: t('privacy'), href: localizedPath('datenschutz', locale) },
 ];
-const telHref = `tel:${nap.phone.replace(/[^+\d]/g, '')}`;
+const services = firm.leistungen.items.map((s) => fill(s.title));
 const year = new Date().getFullYear();
 const path = Astro.url.pathname;
 ---
 <footer class="footer">
   <div class="container-site">
-    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[327px_repeat(4,auto)] xl:justify-between">
-      <div class="flex flex-col gap-[35px] sm:col-span-2 lg:col-span-4 xl:col-span-1 lg:max-w-[420px]">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-12 sm:gap-12 lg:grid-cols-4 xl:grid-cols-[20.4375rem_repeat(4,auto)] xl:justify-between">
+      <div class="col-span-2 flex flex-col gap-[2.1875rem] lg:col-span-4 xl:col-span-1 lg:max-w-[26.25rem]">
         <Logo tone="light" href={sectionHref(SECTION.start, path)} class="self-start" />
-        <p class="leading-6 text-white/80">{site.tagline}</p>
-        <ul class="flex gap-2.5">
+        <p class="leading-6 text-white/80">{fill(firm.brand.description)}</p>
+        {social.length > 0 && <ul class="flex gap-2.5">
           {social.map((s) => {
             const Icon = icons[s.key];
             return (
               <li>
                 <a href={s.href} class="footer__social" aria-label={s.label}>
-                  <Icon width="25" height="25" class="max-h-[25px] max-w-[25px]" aria-hidden="true" />
+                  <Icon width="1.5625rem" height="1.5625rem" class="max-h-[1.5625rem] max-w-[1.5625rem]" aria-hidden="true" />
                 </a>
               </li>
             );
           })}
-        </ul>
+        </ul>}
       </div>
 
-      <nav aria-label="Footer Navigation">
-        <h2 class="footer__h">Navigation</h2>
+      <nav aria-label={t('footerNav')}>
+        <h2 class="footer__h">{t('navigation')}</h2>
         <ul class="footer__list">
-          {mainNav.map((n) => <li><a href={sectionHref(n.section, path)} class="footer__link">{n.label}</a></li>)}
-          <li><a href={sectionHref(SECTION.termin, path)} class="footer__link">Kontakt</a></li>
+          {navFor(locale).map((n) => <li><a href={sectionHref(n.section, path)} class="footer__link">{n.label}</a></li>)}
+          <li><a href={sectionHref(SECTION.termin, path)} class="footer__link">{t('contact')}</a></li>
         </ul>
       </nav>
 
       <div>
-        <h2 class="footer__h">Leistungen</h2>
+        <h2 class="footer__h">{t('services')}</h2>
         <ul class="footer__list">
-          {services.map((s) => <li><a href={sectionHref(SECTION.leistungen, path)} class="footer__link">{s.title}</a></li>)}
+          {services.map((title) => <li><a href={sectionHref(SECTION.leistungen, path)} class="footer__link">{title}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <h2 class="footer__h">Rechtliches</h2>
+        <h2 class="footer__h">{t('legal')}</h2>
         <ul class="footer__list">
           {legal.map((l) => <li><a href={l.href} class="footer__link">{l.label}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <h2 class="footer__h">Kontakt</h2>
+        <h2 class="footer__h">{t('contact')}</h2>
         <ul class="footer__list">
           <li><a href={telHref} class="footer__link">{nap.phone}</a></li>
-          <li><a href={`mailto:${nap.email}`} class="footer__link">{nap.email}</a></li>
+          <li><a href={`mailto:${nap.email}`} class="footer__link [overflow-wrap:anywhere]">{nap.email}</a></li>
           <li class="pt-1 leading-6 text-white">{nap.street}<br />{nap.postalCode} {nap.city}</li>
         </ul>
       </div>
     </div>
 
     <div class="footer__mark" aria-hidden="true">
-      <p class="footer__word" data-footer-word>HARTMANN</p>
+      <p class="footer__word" data-footer-word style={`--chars:${Math.max(4, [...firm.brand.footerWord].length)}`}>{firm.brand.footerWord}</p>
     </div>
 
-    <div class="flex flex-col gap-2 border-t border-white/20 pt-[25px] text-[14px] leading-[21px] text-white sm:flex-row sm:justify-between">
-      <p>© {year} HARTMANN &amp; VOGT</p>
-      <p>Built in figma | Created by Robiu</p>
+    <div class="flex flex-col gap-2 border-t border-white/20 pt-[1.5625rem] text-[0.875rem] leading-[1.3125rem] text-white sm:flex-row sm:justify-between">
+      <p>© {year} {firm.brand.shortName.toUpperCase()}</p>
+      {firm.footer.credit && <p>{firm.footer.credit}</p>}
     </div>
   </div>
 </footer>
@@ -88,25 +89,33 @@ const path = Astro.url.pathname;
   .footer {
     position: relative;
     background: var(--color-ink);
-    padding: 100px 0 40px;
+    padding: 6.25rem 0 2.5rem;
     color: var(--color-paper);
   }
   .footer__h {
     font-family: var(--font-display);
-    font-size: 32px;
-    line-height: 38.4px;
+    font-size: 2.375rem;
+    line-height: 1.05;
+  }
+  /* Mobil zwei Spalten nebeneinander: Ueberschriften etwas kleiner. */
+  @media (max-width: 639px) {
+    .footer__h { font-size: 1.875rem; }
   }
   .footer__list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: 25px;
+    gap: 0.25rem;
+    margin-top: 1.5625rem;
   }
   .footer__link {
     position: relative;
     display: inline-block;
-    padding-top: 4px;
-    line-height: 24px;
+    max-width: 100%;
+    padding-top: 0.25rem;
+    /* Lange Komposita ("Unternehmensberatung") trennen statt ueberzulaufen. */
+    hyphens: auto;
+    overflow-wrap: break-word;
+    line-height: 1.5rem;
     background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
     transition: background-size 0.6s var(--ease-out-expo), color 0.3s;
   }
@@ -114,21 +123,25 @@ const path = Astro.url.pathname;
   .footer__social {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-btn);
     background: var(--color-accent);
     transition: transform 0.5s var(--ease-out-expo), background-color 0.4s;
   }
-  .footer__social:hover { transform: translateY(-4px); background: var(--color-paper); }
+  .footer__social:hover { transform: translateY(-0.25rem); background: var(--color-paper); }
 
   .footer__mark {
     container-type: inline-size;
-    margin-top: clamp(80px, 10vw, 153px);
+    margin-top: clamp(5rem, 10vw, 9.5625rem);
     overflow: hidden;
   }
+  /* Wort ist 6.01em breit: 16.5cqi fuellt die Inhaltsbreite ohne Anschnitt;
+     der negative Rand hebt den Buchstabenabstand nach dem letzten N auf. */
   .footer__word {
-    font-size: 17cqi;
+    margin-right: -0.02em;
+    /* Auf "HARTMANN" (8 Zeichen) = 16.5cqi abgestimmt; skaliert mit der Wortlaenge. */
+    font-size: calc(132cqi / var(--chars, 8));
     line-height: 0.8;
     letter-spacing: 0.02em;
     text-align: center;

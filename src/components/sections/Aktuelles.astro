@@ -1,29 +1,38 @@
 ---
-// Aktuelles (Figma 41:4595 + 41:4599): zentrierte Kopfzeile, zwei Artikelkarten,
-// die in die folgende dunkle CTA-Sektion hineinragen.
+// Aktuelles (Figma 41:4595 + 41:4599): zwei weisse Artikelkarten, die in die
+// folgende dunkle CTA-Sektion hineinragen. Link pro Karte optional (Profil: href).
 import Img from '../ui/Img.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
-import Arrow from '../ui/Arrow.astro';
+import { Image } from 'astro:assets';
+import arrow from '../../assets/icons/arrow-up-right.png';
 import { SECTION } from '../../config/nav';
-import { news } from '../../data/content';
+import { img } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
+
+const c = firm.news;
+const news = c.items.map((n) => ({ ...n, title: fill(n.title), text: fill(n.text), image: img(n.image) }));
 ---
 <section id={SECTION.aktuelles} class="aktuelles">
   <div class="container-site">
-    <header class="mx-auto flex max-w-[852px] flex-col items-center text-center">
-      <Eyebrow>Aktuelles</Eyebrow>
-      <h2 class="t-h2 mt-1.5" data-split>Steuerthemen, die für Ihr Unternehmen zählen</h2>
-    </header>
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+      <div>
+        <Eyebrow>{c.eyebrow}</Eyebrow>
+        <h2 class="t-h3 mt-1.5 max-w-[46rem]" data-split set:html={rich(c.heading)} />
+      </div>
+      <p class="max-w-[24rem] pb-1.5 text-black/70 lg:text-right" data-reveal="up">{fill(c.lead)}</p>
+    </div>
 
-    <div class="mt-[100px] grid gap-[30px] md:grid-cols-2">
+    <div class="mt-16 grid gap-[1.875rem] md:grid-cols-2">
       {news.map((n) => (
-        <article class="news-card has-arrow" data-reveal="up">
+        <article class="news-card" data-reveal="up" data-news-card>
           <div class="news-card__media">
             <Img src={n.image} alt={n.alt} sizes="(min-width: 768px) 50vw, 100vw" widths={[480, 800, 1300]} class="size-full object-cover" pictureClass="block size-full" />
-            <span class="news-card__badge" aria-hidden="true"><Arrow /></span>
+            {n.href && <span class="news-card__badge" aria-hidden="true"><span class="news-card__arrow"><Image src={arrow} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></span></span>}
           </div>
           <div class="p-6">
-            <h3 class="font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] leading-tight text-black">{n.title}</h3>
-            <p class="mt-3.5 leading-6 tracking-[-0.02em] text-black/80">{n.text}</p>
+            <h3 class="t-title text-black">{n.href ? <a href={n.href} class="news-card__link">{n.title}</a> : n.title}</h3>
+            <p class="mt-3.5 leading-6 tracking-[-0.02em] text-black/70">{n.text}</p>
           </div>
         </article>
       ))}
@@ -32,46 +41,73 @@ import { news } from '../../data/content';
 </section>
 
 <style>
+  /* Mit Link: ganze Karte klickbar (Titel bleibt der eigentliche Link). */
+  .news-card__link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .news-card__link:focus-visible { outline: none; }
+  .news-card:has(.news-card__link:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: 3px; }
   .aktuelles {
     position: relative;
     z-index: 2;
-    padding-top: 78px;
+    padding-top: 6.25rem;
   }
   .news-card {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 32px;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    /* Grosse Karten: gleicher Radius wie die Sektionsecken; Bild innen parallel (minus Innenabstand). */
+    border-radius: var(--radius-section);
     background: var(--color-paper);
     transition: transform 0.8s var(--ease-out-expo);
   }
   .news-card__media {
     position: relative;
-    height: clamp(260px, 33vw, 480px);
+    height: clamp(16.25rem, 33vw, 30rem);
     overflow: hidden;
-    border-radius: 24px;
+    border-radius: calc(var(--radius-section) - 0.5rem);
   }
   .news-card__media :global(img) { transition: transform 1.4s var(--ease-out-expo); }
+  /* Pfeil-Badge: Kreis waechst, Pfeil fliegt von links unten ein und beim Verlassen nach rechts oben raus. */
   .news-card__badge {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0.875rem;
+    right: 0.875rem;
     display: grid;
     place-items: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 70px;
+    width: 3.25rem;
+    height: 3.25rem;
+    overflow: hidden;
+    border-radius: 999px;
     background: var(--color-accent);
-    transform: scale(0) rotate(-45deg);
-    transition: transform 0.7s var(--ease-out-expo);
+    transform: scale(0.4);
+    opacity: 0;
+    transition: transform 0.6s var(--ease-out-expo), opacity 0.35s;
   }
+  .news-card__arrow { display: block; transform: translate(-160%, 160%); }
   @media (hover: hover) {
-    .news-card:hover { transform: translateY(-6px); }
+    .news-card:hover { transform: translateY(-0.375rem); }
     .news-card:hover .news-card__media :global(img) { transform: scale(1.06); }
-    .news-card:hover .news-card__badge { transform: scale(1) rotate(0); }
+    .news-card:hover .news-card__badge { transform: scale(1); opacity: 1; }
+    .news-card:hover .news-card__arrow { transform: translate(0, 0); transition: transform 0.7s var(--ease-out-expo) 0.12s; }
+    /* Verlassen: Kreis bleibt stehen, bis der Pfeil rechts oben raus ist, dann schrumpft er. */
+    .news-card.is-leaving .news-card__badge { transform: scale(1); opacity: 1; }
+    .news-card.is-leaving .news-card__arrow { transform: translate(160%, -160%); transition: transform 0.36s cubic-bezier(0.5, 0, 0.75, 0); }
   }
   @media (hover: none) {
-    .news-card__badge { transform: none; }
+    .news-card__badge { transform: none; opacity: 1; }
+    .news-card__arrow { transform: none; }
   }
 </style>
+
+<script>
+  // Beim Verlassen fliegt der Pfeil nach rechts oben raus, danach Reset (unsichtbar).
+  document.querySelectorAll<HTMLElement>('[data-news-card]').forEach((card) => {
+    let t = 0;
+    card.addEventListener('pointerleave', () => {
+      card.classList.add('is-leaving');
+      clearTimeout(t);
+      t = window.setTimeout(() => card.classList.remove('is-leaving'), 380);
+    });
+    card.addEventListener('pointerenter', () => { clearTimeout(t); card.classList.remove('is-leaving'); });
+  });
+</script>

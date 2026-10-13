@@ -1,56 +1,92 @@
 ---
-// Die Kanzlei (Figma 22:233): schwarze Sektion mit runder Unterkante,
-// Kennzahlen-Leiste und drei Karten, die ueber die Kante hinausragen.
+// Die Kanzlei (Figma 22:233): schwarze Sektion mit runder Unterkante.
+// Kopf zweispaltig, Kennzahlen als "Kontenblatt" (Haarlinien zeichnen sich,
+// Ziffern rollen wie ein Zaehlwerk ein), drei Karten ragen ueber die Kante.
 import { Image } from 'astro:assets';
 import Img from '../ui/Img.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
 import IconTile from '../ui/IconTile.astro';
 import { SECTION } from '../../config/nav';
-import { stats } from '../../data/content';
-import laptop from '../../assets/images/kanzlei-laptop.png';
+import { img } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
 import scales from '../../assets/icons/scales.png';
 import scan from '../../assets/icons/scan.png';
+
+const c = firm.kanzlei;
+const icons = [scales, scan];
+// "15 Jahre" -> Ziffern "15" + Einheit " Jahre"; "+" bleibt gross, Woerter klein.
+const figures = firm.stats.map((raw) => {
+  const s = { value: fill(raw.value), label: fill(raw.label) };
+  const m = s.value.match(/^(\d+)(.*)$/) ?? ['', s.value, ''];
+  const unit = m[2];
+  return { ...s, digits: [...m[1]].map(Number), unit, unitSmall: /[a-z]/i.test(unit) };
+});
+const strip = [...Array(20).keys()].map((n) => n % 10);
 ---
 <section id={SECTION.kanzlei} class="kanzlei">
   <div class="container-site">
-    <header class="mx-auto flex max-w-[730px] flex-col items-center text-center">
-      <Eyebrow>Die Kanzlei</Eyebrow>
-      <h2 class="t-h2 mt-3 text-white" data-split>Steuerberatung, die mitdenkt statt abrechnet</h2>
-      <p class="mt-6 max-w-[500px] text-white/80" data-reveal="up">
-        Ob GmbH-Gründung, laufende Buchhaltung oder Jahresabschluss: Sie haben einen festen Ansprechpartner, der Ihr Unternehmen kennt und nicht jedes Mal neu einliest.
-      </p>
+    <header class="kanzlei__head">
+      <div>
+        <Eyebrow>{c.eyebrow}</Eyebrow>
+        <h2 class="t-h2 mt-3 text-white" data-split set:html={rich(c.heading)} />
+      </div>
+      <p class="kanzlei__lead" data-reveal="up">{fill(c.lead)}</p>
     </header>
 
-    <ul class="kanzlei__stats">
-      {stats.map((s, i) => (
-        <Fragment>
-          {i > 0 && <li class="kanzlei__divider" aria-hidden="true"></li>}
-          <li class="kanzlei__stat" data-reveal="up">
-            <p class="t-stat text-white" data-counter>{s.value}</p>
-            <p class="text-accent">{s.label}</p>
+    <!-- Kennzahlen als Kontenblatt -->
+    <div class="ledger" data-ledger>
+      <span class="ledger__rule" aria-hidden="true"></span>
+      <ul class="ledger__grid">
+        {figures.map((f, i) => (
+          <li class="ledger__cell" style={`--c:${i}`}>
+            <span class="ledger__vrule" aria-hidden="true"></span>
+            <span class="ledger__idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <p class="ledger__num">
+              <span class="sr-only">{f.value}</span>
+              <span aria-hidden="true" class="ledger__digits">
+                {f.digits.map((d, j) => (
+                  <span class="odo" style={`--d:${d};--j:${f.digits.length - 1 - j}`}>
+                    <span class="odo__sizer">{d}</span>
+                    <span class="odo__strip">{strip.map((n) => <span>{n}</span>)}</span>
+                  </span>
+                ))}
+                <span class:list={['ledger__unit', f.unitSmall && 'ledger__unit--small']}>{f.unit}</span>
+              </span>
+            </p>
+            <p class="ledger__label">{f.label}</p>
           </li>
-        </Fragment>
-      ))}
-    </ul>
+        ))}
+      </ul>
+      <span class="ledger__rule" aria-hidden="true"></span>
+    </div>
 
     <div class="kanzlei__cards">
-      <article class="kanzlei-card bg-paper" data-reveal="up">
-        <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+      <article class="kanzlei-card kanzlei-card--light" data-reveal="up">
+        <div class="kanzlei-card__top">
+          <IconTile class="kanzlei-card__icon"><Image src={icons[0]} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
+          <span class="kanzlei-card__no" aria-hidden="true">01</span>
+        </div>
         <div>
-          <h3 class="t-h5">Fester Ansprechpartner</h3>
-          <p class="mt-3 text-black/60">Sie sprechen immer mit derselben Person. Kein Ticketsystem, keine Warteschleife, keine Erklärungen von vorn.</p>
+          <h3 class="t-title">{fill(c.cards[0].title)}</h3>
+          <p class="mt-3 text-black/60">{fill(c.cards[0].text)}</p>
         </div>
       </article>
 
-      <div class="kanzlei-media" data-reveal="image" data-radius="10px">
-        <Img src={laptop} alt="Steuerberater arbeitet konzentriert am Laptop im Büro" sizes="(min-width: 1024px) 420px, 100vw" class="size-full object-cover" pictureClass="block size-full" />
+      <div class="kanzlei-media" data-reveal="image">
+        <div class="absolute inset-x-0 -inset-y-[10%]" data-parallax="0.08">
+          <Img src={img(c.image)} alt={c.imageAlt} sizes="(min-width: 1440px) 30vw, (min-width: 1024px) 420px, 100vw" class="size-full object-cover" pictureClass="block size-full" />
+        </div>
       </div>
 
-      <article class="kanzlei-card bg-accent" data-reveal="up">
-        <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+      <article class="kanzlei-card kanzlei-card--accent" data-reveal="up">
+        <div class="kanzlei-card__top">
+          <IconTile class="kanzlei-card__icon"><Image src={icons[1]} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
+          <span class="kanzlei-card__no" aria-hidden="true">02</span>
+        </div>
         <div>
-          <h3 class="t-h5 text-white">Feste Monatspauschale</h3>
-          <p class="mt-3 text-white/60">Sie wissen vorab, was die Betreuung kostet. Keine Überraschungen auf der Rechnung, keine Abrechnung nach Zeit.</p>
+          <h3 class="t-title text-white">{fill(c.cards[1].title)}</h3>
+          <p class="kanzlei-card__text">{fill(c.cards[1].text)}</p>
         </div>
       </article>
     </div>
@@ -60,49 +96,127 @@ import scan from '../../assets/icons/scan.png';
 <style>
   .kanzlei {
     --eyebrow-color: var(--color-accent);
+    --line: rgb(255 255 255 / 0.16);
     position: relative;
     z-index: 1;
+    /* flow-root: die negative Unterkante der Karten verkuerzt die Sektion,
+       statt durchzuschlagen (Margin-Collapsing) -> Karten haengen ueber den Bogen. */
+    display: flow-root;
     background: var(--color-ink);
     border-radius: 0 0 var(--radius-section) var(--radius-section);
-    padding-top: 80px;
+    padding-top: 5rem;
   }
   @media (min-width: 1024px) {
-    .kanzlei { padding-top: 0; }
+    .kanzlei { padding-top: 2.5rem; }
   }
 
-  .kanzlei__stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px 24px;
-    margin-top: 70px;
+  /* Kopf */
+  .kanzlei__head { display: grid; gap: 1.75rem; }
+  .kanzlei__lead { max-width: 28rem; font-size: 1.0625rem; line-height: 1.6; color: rgb(255 255 255 / 0.7); }
+  @media (min-width: 1024px) {
+    .kanzlei__head { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); align-items: end; gap: 3rem; }
+    .kanzlei__lead { justify-self: end; padding-bottom: 0.5rem; }
   }
-  .kanzlei__stat {
+
+  /* Kontenblatt */
+  .ledger { margin-top: 4.5rem; }
+  .ledger__rule {
+    display: block;
+    height: 1px;
+    background: var(--line);
+    transform-origin: 0 50%;
+    transition: transform 1.4s var(--ease-in-out-expo);
+  }
+  .ledger__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Zahl links, Index rechts in derselben Zeile, Beschriftung darunter. */
+  .ledger__cell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 0.75rem;
+    align-items: start;
+    padding: 2rem 1rem 1.75rem 0;
+  }
+  .ledger__cell:nth-child(even) { padding-left: 1rem; }
+  .ledger__cell:nth-child(-n + 2) { border-bottom: 1px solid var(--line); }
+  .ledger__vrule {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+    transform-origin: 50% 0;
+    transition: transform 1.2s var(--ease-in-out-expo);
+    transition-delay: calc(0.3s + var(--c) * 0.08s);
+  }
+  .ledger__cell:nth-child(odd) .ledger__vrule { display: none; }
+  .ledger__idx {
+    grid-row: 1;
+    grid-column: 2;
+    padding-top: 0.25rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .ledger__num {
+    grid-row: 1;
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-size: var(--fs-stat);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-paper);
+  }
+  .ledger__digits { display: inline-flex; align-items: baseline; white-space: nowrap; }
+  .ledger__unit--small { margin-left: 0.18em; font-size: 0.5em; color: rgb(255 255 255 / 0.55); letter-spacing: 0; }
+  .ledger__label { grid-column: 1 / -1; margin-top: 0.75rem; font-size: 0.9375rem; line-height: 1.4; color: rgb(255 255 255 / 0.6); }
+
+  /* Zaehlwerk: Streifen 0-9 0-9, Endstellung zeigt Ziffer --d. */
+  .odo { position: relative; display: inline-block; height: 1em; overflow: hidden; line-height: 1; vertical-align: baseline; }
+  .odo__sizer { visibility: hidden; }
+  .odo__strip {
+    position: absolute;
+    left: 50%;
+    top: 0;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    align-items: center;
+    translate: -50% 0;
+    transform: translateY(calc((var(--d) + 10) * -1em));
+    transition: transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(0.35s + var(--c) * 0.12s + var(--j) * 0.1s);
   }
-  .kanzlei__divider { display: none; }
+  .odo__strip > span { display: block; height: 1em; }
+
   @media (min-width: 1024px) {
-    .kanzlei__stats {
-      display: flex;
-      justify-content: space-between;
-      align-items: stretch;
-      gap: 0;
-    }
-    .kanzlei__divider {
-      display: block;
-      width: 1px;
-      background: rgb(255 255 255 / 0.6);
-    }
+    .ledger__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ledger__cell, .ledger__cell:nth-child(even), .ledger__cell:nth-child(-n + 2) { padding: 2rem 1.5rem 2rem; border-bottom: 0; }
+    .ledger__cell:first-child { padding-left: 0; }
+    .ledger__cell:nth-child(odd) .ledger__vrule { display: block; }
+    .ledger__cell:first-child .ledger__vrule { display: none; }
   }
 
+  /* Startzustand nur mit JS + Bewegung erlaubt; .is-on setzt die Endstellung. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .ledger:not(.is-on) .ledger__rule { transform: scaleX(0); }
+    :global(html.js) .ledger:not(.is-on) .ledger__vrule { transform: scaleY(0); }
+    :global(html.js) .ledger:not(.is-on) .odo__strip { transform: translateY(0); }
+    :global(html.js) .ledger:not(.is-on) .ledger__idx,
+    :global(html.js) .ledger:not(.is-on) .ledger__label,
+    :global(html.js) .ledger:not(.is-on) .ledger__unit { opacity: 0; }
+    .ledger__idx, .ledger__label, .ledger__unit { transition: opacity 0.8s ease; transition-delay: calc(0.5s + var(--c, 0) * 0.1s); }
+  }
+
+  /* Karten */
   .kanzlei__cards {
     position: relative;
     z-index: 2;
     display: grid;
-    gap: 12px;
-    margin-top: 70px;
-    margin-bottom: -130px;
+    gap: 0.75rem;
+    margin-top: 4rem;
+    margin-bottom: -8.125rem;
   }
   @media (min-width: 1024px) {
     .kanzlei__cards { grid-template-columns: 1fr minmax(0, 0.955fr) 1fr; }
@@ -111,15 +225,46 @@ import scan from '../../assets/icons/scan.png';
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 80px;
-    min-height: 354px;
-    padding: 32px;
+    gap: 3.5rem;
+    min-height: 22.125rem;
+    padding: 2rem;
     border-radius: var(--radius-card);
+    transition: transform 0.7s var(--ease-out-expo), box-shadow 0.7s var(--ease-out-expo);
   }
+  .kanzlei-card--light { background: var(--color-paper); }
+  .kanzlei-card--accent { background: var(--color-accent); }
+  .kanzlei-card__top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .kanzlei-card__no {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    color: rgb(0 0 0 / 0.1);
+  }
+  .kanzlei-card--accent .kanzlei-card__no { color: rgb(255 255 255 / 0.28); }
+  .kanzlei-card__text { margin-top: 0.75rem; color: rgb(255 255 255 / 0.85); }
+  .kanzlei-card :global(.kanzlei-card__icon) { transition: background-color 0.5s var(--ease-out-expo), transform 0.7s var(--ease-out-expo); }
+  @media (hover: hover) {
+    .kanzlei-card:hover { transform: translateY(-0.375rem); box-shadow: 0 2rem 3rem -2rem rgb(0 0 0 / 0.6); }
+    .kanzlei-card--light:hover :global(.kanzlei-card__icon) { background: var(--color-accent); transform: rotate(-6deg); }
+    .kanzlei-card--accent:hover :global(.kanzlei-card__icon) { transform: rotate(-6deg); }
+  }
+
   .kanzlei-media {
     position: relative;
-    height: 354px;
+    height: 22.125rem;
     overflow: hidden;
     border-radius: var(--radius-card);
   }
 </style>
+
+<script>
+  // Kontenblatt starten, sobald es ins Bild kommt (CSS-Transitions erledigen den Rest).
+  const ledger = document.querySelector<HTMLElement>('[data-ledger]');
+  if (ledger) {
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { ledger.classList.add('is-on'); io.disconnect(); }
+    }, { rootMargin: '0px 0px -15% 0px' });
+    io.observe(ledger);
+  }
+</script>

@@ -1,0 +1,11 @@
+---
+// Startseite Englisch (/en/). Entsteht nur, wenn das Kanzlei-Profil Englisch
+// eingeschaltet hat (languages.en); sonst wird keine EN-Seite gebaut.
+import HomePage from '../../components/pages/HomePage.astro';
+import { hasEnglish } from '../../config/firm';
+
+export function getStaticPaths() {
+  return hasEnglish ? [{ params: { lang: 'en' } }] : [];
+}
+---
+<HomePage />

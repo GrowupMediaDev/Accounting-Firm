@@ -1,6 +1,7 @@
 ---
 // Ein Link aus Button + Pfeil-Kachel (Figma 16:6737, Header-CTA).
-// Beide Teile reagieren gemeinsam auf Hover.
+// Beide Teile reagieren gemeinsam auf Hover: ruhige Farbblende, der Pfeil
+// fliegt raus und kommt nach (Arrow.astro).
 import ArrowTile from './ArrowTile.astro';
 
 interface Props {
@@ -13,10 +14,7 @@ const { href, label, class: className } = Astro.props;
 <a href={href} class:list={['cta-pair has-arrow group inline-flex items-center gap-2', className]}>
   <span class="cta-pair__btn">
     <span class="cta-pair__fill" aria-hidden="true"></span>
-    <span class="cta-pair__label">
-      <span class="cta-pair__text">{label}</span>
-      <span class="cta-pair__text cta-pair__text--clone" aria-hidden="true">{label}</span>
-    </span>
+    <span class="cta-pair__label">{label}</span>
   </span>
   <ArrowTile as="span" />
 </a>
@@ -27,13 +25,13 @@ const { href, label, class: className } = Astro.props;
     isolation: isolate;
     display: inline-flex;
     align-items: center;
-    height: 50px;
-    padding: 12px 24px;
+    height: 3.125rem;
+    padding: 0.75rem 1.5rem;
     border-radius: var(--radius-btn);
     overflow: hidden;
     background: var(--color-ink);
     color: var(--color-paper);
-    line-height: 26px;
+    line-height: 1.625rem;
     white-space: nowrap;
   }
   .cta-pair__fill {
@@ -41,18 +39,17 @@ const { href, label, class: className } = Astro.props;
     inset: 0;
     z-index: -1;
     background: var(--color-accent);
-    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
-    transform: translateY(101%);
-    transition: transform 0.6s var(--ease-out-expo), border-radius 0.6s var(--ease-out-expo);
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out-quart);
   }
-  .cta-pair__label { position: relative; display: block; overflow: hidden; }
-  .cta-pair__text { display: block; transition: transform 0.6s var(--ease-out-expo); }
-  .cta-pair__text--clone { position: absolute; inset: 0; transform: translateY(100%); }
+  .cta-pair__label { position: relative; display: block; }
+  .cta-pair { transition: transform 0.45s var(--ease-out-quart); }
+  .cta-pair :global(.arrow-tile) { transition: background-color 0.45s var(--ease-out-quart); }
 
   @media (hover: hover) {
-    .cta-pair:hover .cta-pair__fill { transform: translateY(0); border-radius: 0; }
-    .cta-pair:hover .cta-pair__text { transform: translateY(-100%); }
-    .cta-pair:hover .cta-pair__text--clone { transform: translateY(0); }
+    .cta-pair:hover .cta-pair__fill { opacity: 1; }
     .cta-pair:hover :global(.arrow-tile) { background: var(--color-ink); }
   }
+  .cta-pair:active { transform: scale(0.98); transition-duration: 0.15s; }
+  .cta-pair:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; border-radius: var(--radius-btn); }
 </style>

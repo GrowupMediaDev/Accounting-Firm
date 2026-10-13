@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Konfigurator</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/__cfg/ui/app.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="top__brand">
+      <span class="top__logo" aria-hidden="true"></span>
+      <strong data-i18n>Konfigurator</strong>
+    </div>
+    <label class="top__firm">
+      <span class="sr-only" data-i18n>Kanzlei</span>
+      <select data-firm-select></select>
+    </label>
+    <button type="button" class="btn btn--ghost" data-new-firm data-i18n>+ Neue Kanzlei</button>
+    <div class="seg seg--lang" role="group" data-content-lang data-i18n-aria="Website-Sprache" aria-label="Website-Sprache" hidden>
+      <button type="button" data-mode="de" aria-pressed="true" data-i18n>Deutsch</button>
+      <button type="button" data-mode="en" aria-pressed="false">English</button>
+    </div>
+    <span class="top__status" data-status aria-live="polite"></span>
+    <div class="top__spacer"></div>
+    <div class="top__undo">
+      <button type="button" class="icon-btn" data-undo title="Rückgängig (⌘Z)" aria-label="Rückgängig" data-i18n-title="Rückgängig (⌘Z)" data-i18n-aria="Rückgängig" disabled>↶</button>
+      <button type="button" class="icon-btn" data-redo title="Wiederholen (⇧⌘Z)" aria-label="Wiederholen" data-i18n-title="Wiederholen (⇧⌘Z)" data-i18n-aria="Wiederholen" disabled>↷</button>
+    </div>
+    <div class="seg" role="group" aria-label="Vorschaugröße" data-i18n-aria="Vorschaugröße">
+      <button type="button" data-device="desktop" aria-pressed="true" data-i18n>Desktop</button>
+      <button type="button" data-device="tablet" aria-pressed="false" data-i18n>Tablet</button>
+      <button type="button" data-device="mobile" aria-pressed="false" data-i18n>Mobil</button>
+    </div>
+    <button type="button" class="btn btn--ghost" data-check><span data-i18n>Prüfen</span> <span class="badge" data-check-count hidden></span></button>
+    <a class="btn btn--ghost" href="/" target="_blank" rel="noopener" data-i18n>Seite öffnen ↗</a>
+  </header>
+
+  <main class="main">
+    <aside class="panel">
+      <div class="panel__search">
+        <input type="search" placeholder="Feld suchen, z. B. Telefon" data-search aria-label="Feld suchen" data-i18n-placeholder="Feld suchen, z. B. Telefon" data-i18n-aria="Feld suchen" />
+      </div>
+      <details class="hint">
+        <summary data-i18n>Platzhalter und Akzentwörter</summary>
+        <p><span data-i18n>In Texten werden</span> <span data-placeholders></span> <span data-i18n>automatisch ersetzt.</span></p>
+        <p><span data-i18n>In Überschriften wird</span> <code>*word*</code> <span data-i18n>zum Akzentwort (kursiv, Akzentfarbe). Text markieren und</span> <kbd>✦</kbd> <span data-i18n>drücken.</span></p>
+      </details>
+      <div class="groups" data-groups></div>
+    </aside>
+
+    <section class="stage" data-stage>
+      <div class="frame" data-frame>
+        <iframe title="Vorschau" data-preview></iframe>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" data-picker>
+    <form method="dialog" class="modal__head">
+      <h2 data-i18n>Bild wählen</h2>
+      <button class="icon-btn" aria-label="Schließen" data-i18n-aria="Schließen">✕</button>
+    </form>
+    <label class="drop" data-drop>
+      <input type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/gif,image/svg+xml" multiple data-upload hidden />
+      <strong data-i18n>Bild hochladen</strong>
+      <span data-i18n>Hierher ziehen oder klicken. PNG, JPG, WebP oder SVG.</span>
+    </label>
+    <div class="picker" data-picker-grid></div>
+  </dialog>
+
+  <dialog class="modal modal--small" data-new-dialog>
+    <form method="dialog" class="modal__head">
+      <h2 data-i18n>Neue Kanzlei</h2>
+      <button class="icon-btn" aria-label="Schließen" data-i18n-aria="Schließen">✕</button>
+    </form>
+    <form class="stack" data-new-form>
+      <p class="muted" data-i18n>Kopiert die aktuelle Kanzlei samt Bildern als Ausgangspunkt.</p>
+      <label class="field"><span class="field__label" data-i18n>Name der Kanzlei</span><input name="name" required placeholder="Müller &amp; Partner Steuerberatung" /></label>
+      <label class="field"><span class="field__label" data-i18n>Kürzel (Ordner, Build)</span><input name="slug" required pattern="[a-z0-9][a-z0-9\-]*" placeholder="mueller-partner" /></label>
+      <p class="error" data-new-error hidden></p>
+      <button class="btn btn--primary" data-i18n>Anlegen und öffnen</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" data-check-dialog>
+    <form method="dialog" class="modal__head">
+      <h2 data-i18n>Prüfen vor dem Versand</h2>
+      <button class="icon-btn" aria-label="Schließen" data-i18n-aria="Schließen">✕</button>
+    </form>
+    <div class="stack" data-check-list></div>
+    <div class="build">
+      <p class="field__label" data-i18n>Website für diese Kanzlei bauen</p>
+      <code data-build-cmd></code>
+      <p class="muted"><span data-i18n>Ergebnis liegt danach in</span> <code>dist/</code></p>
+    </div>
+  </dialog>
+
+  <script type="module" src="/__cfg/ui/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* Gambarino (Indian Type Foundry, Fontshare). Self-hosted gemaess ITF Free Font
+   License (siehe src/assets/fonts/FFL-Fontshare-License.txt). Aktiv, wenn das
+   Kanzlei-Profil theme.displayFont = "gambarino" setzt (html[data-font]). */
+@font-face {
+  font-family: 'Gambarino';
+  src: url('../assets/fonts/Gambarino-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  /* Laeuft ca. 23 % breiter als Instrument Serif, auf die die Groessen abgestimmt sind. */
+  size-adjust: 88%;
+}
+
+/* Gambarino als Display-Schrift (Profil-Option). */
+html[data-font='gambarino'] { --font-display: 'Gambarino', Georgia, serif; }
+/* Keine Kursive: Akzentwoerter aufrecht in Akzentfarbe. */
+html[data-font='gambarino'] :where(h1, h2, h3, .t-display, .t-h2, .t-h3) em { font-style: normal; }
+/* size-adjust 88 %: ~108px fuer die Versalhoehe der 96px-Hero-Zeile. */
+html[data-font='gambarino'] h1.hero__title { font-size: clamp(3.25rem, 2.05rem + 5.25vw, 6.75rem); }
+@media (max-width: 767px) {
+  html[data-font='gambarino'] h1.hero__title { font-size: min(15.4vw, 4.5625rem); }
+}
+/* Breiter als Instrument Serif: der CTA-Titel bricht wie bei Instrument Serif. */
+html[data-font='gambarino'] .wechsel h2.font-display { max-width: 62rem; }

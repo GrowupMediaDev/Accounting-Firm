@@ -1,0 +1,286 @@
+{
+  "brand": {
+    "description": "Tax advice for businesses, self-employed professionals and private clients in {city}. Personal support, forward-looking, digitally organised."
+  },
+  "seo": {
+    "title": "Tax Advisor {city} – {name}",
+    "description": "Tax advisors in {city} for businesses, freelancers and private clients: tax returns, bookkeeping, payroll and annual accounts, with personal support."
+  },
+  "stats": [
+    {
+      "value": "{years} years",
+      "label": "Experience in tax advice"
+    },
+    {
+      "value": "400+",
+      "label": "Clients supported"
+    },
+    {
+      "value": "12",
+      "label": "Team members"
+    },
+    {
+      "value": "3",
+      "label": "Certified tax advisors"
+    }
+  ],
+  "nav": {
+    "start": "Home",
+    "kanzlei": "Firm",
+    "leistungen": "Services",
+    "team": "Team",
+    "aktuelles": "Insights",
+    "cta": "Book a meeting"
+  },
+  "hero": {
+    "eyebrow": "Tax advisors in {city}",
+    "title": [
+      "Clarity for",
+      "your numbers"
+    ],
+    "text": "We advise businesses, self-employed professionals and private clients in {city}: personal, forward-looking and digitally organised.",
+    "primaryCta": "Book a first meeting",
+    "secondaryCta": "View services",
+    "note": "First meeting free of charge and without obligation.",
+    "imageAlt": "Partners Julia Vogt and Dr. Michael Hartmann",
+    "availabilityLabel": "Availability",
+    "availabilityText": "{open}:00–{close}:00, personally there for you.",
+    "deadlineTitle": "Deadlines covered",
+    "deadlineText": "VAT returns, tax returns, prepayments: every deadline planned before it becomes urgent.",
+    "deadlineImageAlt": "Master craftsman in his workshop",
+    "deadlineItem": "VAT return",
+    "deadlineStart": "In progress",
+    "deadlineSteps": [
+      "Prepared",
+      "Reviewed",
+      "Submitted"
+    ]
+  },
+  "kanzlei": {
+    "eyebrow": "The firm",
+    "heading": "Tax advice that *thinks ahead* and plans for you",
+    "lead": "Whether you are starting up, need ongoing bookkeeping or your annual accounts: you have dedicated contacts who know your business and keep an eye on deadlines, figures and opportunities.",
+    "cards": [
+      {
+        "title": "One dedicated contact",
+        "text": "You always speak to the same person, who knows your documents and goals. No waiting lines, no explaining everything again."
+      },
+      {
+        "title": "Transparent fees",
+        "text": "You know the cost up front: under the official fee schedule or as an agreed flat fee, put in writing."
+      }
+    ],
+    "imageAlt": "Tax advisor working focused on a laptop in the office"
+  },
+  "leistungen": {
+    "eyebrow": "Our services",
+    "heading": "Tax advice for *every stage* of your business",
+    "lead": "From founding to ongoing bookkeeping to annual accounts, for businesses and private clients alike. We take care of the obligations and keep track of the deadlines.",
+    "scopeLabel": "What's included",
+    "cta": "Request advice",
+    "items": [
+      {
+        "title": "Tax advice",
+        "text": "Tax returns for businesses and private clients, carefully prepared and filed on time. We check your tax assessments and represent you before the tax office.",
+        "points": [
+          "Business tax returns",
+          "Income tax for private clients",
+          "Review of tax assessments"
+        ],
+        "alt": "Tax advisor going through documents with a client"
+      },
+      {
+        "title": "Bookkeeping",
+        "text": "Ongoing bookkeeping with DATEV, digitally or the classic way with a document folder. You get reliable figures every month.",
+        "points": [
+          "Booking and accounting",
+          "VAT returns",
+          "Monthly management reports"
+        ],
+        "alt": "Accountant working with reports on two monitors"
+      },
+      {
+        "title": "Payroll",
+        "text": "Payslips for your team on time, including all filings with health insurers, the tax office and the employers' liability insurance.",
+        "points": [
+          "Wage and salary statements",
+          "Social security filings",
+          "Payroll tax returns"
+        ],
+        "alt": "Payroll specialist going through payslips with a business owner"
+      },
+      {
+        "title": "Annual accounts",
+        "text": "Balance sheet or cash-basis accounts, prepared on time and explained clearly. In the closing meeting we look ahead together.",
+        "points": [
+          "Balance sheet and profit and loss statement",
+          "Cash-basis accounting",
+          "Closing meeting with outlook"
+        ],
+        "alt": "Tax advisor explaining the annual accounts to a client"
+      },
+      {
+        "title": "Business advice",
+        "text": "Founding, choice of legal form, financing or succession: we calculate your options and support you in putting them into practice.",
+        "points": [
+          "Business start-up and legal form",
+          "Financing and liquidity planning",
+          "Business succession"
+        ],
+        "alt": "Advisory meeting closing with a handshake"
+      }
+    ]
+  },
+  "ansatz": {
+    "eyebrow": "Our approach",
+    "heading": "Numbers are only the *beginning* of good advice",
+    "lead": "Most business owners get a monthly report and know just as much afterwards as before. We go through it with you and turn the numbers into decisions: hiring, investing, raising prices.",
+    "signalsLabel": "We get in touch when we notice:",
+    "signals": [
+      {
+        "label": "Shrinking margins"
+      },
+      {
+        "label": "Growing receivables"
+      },
+      {
+        "label": "Tax back payment next quarter"
+      }
+    ],
+    "foot": "Not only at year end.",
+    "cta": "Book a first meeting",
+    "imageAlt": "Tax advisor discussing the monthly report with a client",
+    "noteValue": "Gross profit −4 %",
+    "noteText": "vs. last quarter",
+    "noteTag": "Next step",
+    "noteAction": "Review prices for Q3"
+  },
+  "warum": {
+    "eyebrow": "Why us",
+    "heading": "What sets us apart from the firm *next door*",
+    "detailLabel": "What this means",
+    "items": [
+      {
+        "title": "Industry know-how",
+        "text": "Trades, healthcare, real estate or e-commerce: we know the tax specifics of your industry.",
+        "detail": "You get advice that fits your business, not just general rules.",
+        "alt": "Tax advisor on the phone with a client"
+      },
+      {
+        "title": "Digital collaboration",
+        "text": "Send receipts digitally, view reports online. We work with DATEV Unternehmen online.",
+        "detail": "No post, no waiting. And if you prefer to drop your documents off in person, you still can.",
+        "alt": "Tax advisor on a video call with a client"
+      },
+      {
+        "title": "In person, on site",
+        "text": "Meetings at our office, by video or at your business. Whatever suits you best.",
+        "detail": "Especially for big decisions, we like to sit down with you at one table.",
+        "alt": "Tax advisor going through documents with a café owner in her café"
+      },
+      {
+        "title": "We call you first",
+        "text": "Deadlines, prepayments, anything unusual in your numbers: you hear it from us before it becomes a problem.",
+        "detail": "No surprises from the tax office, but time to react.",
+        "alt": "Tax advisor calling a client, with a report and a calendar with a marked deadline"
+      }
+    ]
+  },
+  "team": {
+    "eyebrow": "Our team",
+    "heading": "People who know *your numbers*",
+    "button": "Meet us in person",
+    "members": [
+      {
+        "role": "Tax advisor, partner"
+      },
+      {
+        "role": "Tax advisor, partner"
+      },
+      {
+        "role": "Tax advisor"
+      }
+    ]
+  },
+  "testimonials": {
+    "eyebrow": "Client voices",
+    "heading": "What our clients *say* about us",
+    "lead": "Businesses, self-employed professionals and private clients from {city} and the region. Since {founded}.",
+    "items": [
+      {
+        "quote": "We used to have two providers for bookkeeping and payroll and constant back-and-forth between them. Now everything runs through one place, and I get my monthly report on the 10th, not whenever.",
+        "role": "Managing director, Berger Elektrotechnik GmbH"
+      },
+      {
+        "quote": "Switching firms mid-year, I expected chaos. The handover was handled entirely by the firm, I only had to sign.",
+        "role": "Owner, Wolff Innenarchitektur"
+      },
+      {
+        "quote": "Finally someone who explains the numbers instead of just sending them. The quarterly meetings are now a fixed date for me.",
+        "role": "Founder, Albers Digital UG"
+      }
+    ]
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "heading": "Answers to what clients *ask*",
+    "contactTitle": "Still unsure?",
+    "contactText": "The first meeting is free and without obligation. We listen to your situation and tell you honestly whether we are a good fit.",
+    "contactCta": "Book a first meeting",
+    "items": [
+      {
+        "q": "What does it cost?",
+        "a": "Tax advisors in Germany charge according to the official fee regulation (StBVV). For ongoing services such as bookkeeping and payroll we can agree a monthly flat fee. Either way, we tell you the cost up front and put it in writing."
+      },
+      {
+        "q": "Who do you work for?",
+        "a": "For businesses of every legal form, freelancers, self-employed professionals and private clients. Our focus is on small and mid-sized, owner-managed companies."
+      },
+      {
+        "q": "How does switching firms work?",
+        "a": "You give notice to your current firm, we take care of the rest: data transfer from DATEV, coordinating open deadlines and handing over documents. Switching is possible mid-year, too."
+      },
+      {
+        "q": "Do I need to change my accounting software?",
+        "a": "In most cases, no. We work with DATEV and connect common programs and bank accounts. If a change makes sense, we will tell you and support the switch."
+      },
+      {
+        "q": "Do you also work with clients outside {city}?",
+        "a": "Yes. Thanks to digital collaboration we support clients all over Germany. Personal meetings take place at our office in {city} or by video."
+      },
+      {
+        "q": "What do I need for the first meeting?",
+        "a": "Nothing but a little time. Helpful are your last annual accounts or monthly report, or for private clients your last tax assessment."
+      }
+    ]
+  },
+  "news": {
+    "eyebrow": "Insights",
+    "heading": "Tax topics that *matter* for your business",
+    "lead": "In brief: what is changing, who it affects and what you should do now.",
+    "items": [
+      {
+        "title": "E-invoicing: what businesses need to know now",
+        "text": "Since 2025, businesses in Germany must be able to receive e-invoices. Transition periods apply for sending. What you need to change, and by when.",
+        "alt": "Master craftsman checking an invoice on his laptop in his workshop office"
+      },
+      {
+        "title": "GmbH or UG: the numbers behind the decision",
+        "text": "Share capital, liability, running costs and perception. We calculate both options using a concrete example.",
+        "alt": "Two founders comparing documents and figures"
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Good advice starts with a *conversation*",
+    "text": "We clarify where you stand, what you need and what our support costs. Then you decide in your own time.",
+    "button": "Request a first meeting",
+    "facts": [
+      "Free and without obligation",
+      "{days}, {open}:00–{close}:00",
+      "Office, video or phone"
+    ],
+    "mailSubject": "First meeting request",
+    "mailBody": "Hello,\n\nI am interested in a first meeting without obligation.\n\nName:\nPhone:\nCompany / profession:\nWhat it is about:\n\nKind regards"
+  }
+}

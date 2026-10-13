@@ -4,11 +4,10 @@
 //   data-split[="load"]       Headline zeilenweise aus einer Maske schieben
 //   data-reveal="up|fade"     Einblenden + leicht hochfahren (Geschwister staffeln sich)
 //   data-reveal="image"       Bild per clip-path aufdecken, Inhalt skaliert zurueck
-//   data-radius="10px"        Eckenradius fuer die image-Maske (Default 16px)
+//   data-radius="0.625rem"    Eckenradius fuer die image-Maske (Default = --radius-card)
 //   data-reveal-delay="0.2"   Zusatzverzoegerung in Sekunden
 //   data-parallax="0.12"      Vertikale Parallaxe (Anteil der eigenen Hoehe)
 //   data-counter              Zahl im Text hochzaehlen ("180+", "24 Std.")
-//   data-magnetic             Element folgt dem Cursor leicht (nur Maus)
 //
 // Ohne JS oder mit prefers-reduced-motion bleibt alles sofort sichtbar
 // (Startzustaende in global.css haengen an html.js + no-preference).
@@ -24,7 +23,6 @@ const EXPO = 'expo.out';
 const START = 'top 88%';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 function delayOf(el: Element): number {
   return parseFloat((el as HTMLElement).dataset.revealDelay ?? '0') || 0;
@@ -65,6 +63,8 @@ function initSplits() {
       mask: 'lines',
       linesClass: 'split-line',
       autoSplit: true,
+      // Sonst wandelt SplitText die geschuetzten Leerzeichen (bindLastWords) zurueck.
+      reduceWhiteSpace: false,
       onSplit(self) {
         gsap.set(el, { visibility: 'visible' });
         return gsap.from(self.lines, {
@@ -102,7 +102,7 @@ function initReveals() {
 
   gsap.utils.toArray<HTMLElement>('[data-reveal="image"]').forEach((el) => {
     const inner = el.querySelector('img, picture, video');
-    const radius = el.dataset.radius ?? '16px';
+    const radius = el.dataset.radius ?? getComputedStyle(el).borderTopLeftRadius ?? '1rem';
     const tl = gsap.timeline({
       delay: delayOf(el),
       scrollTrigger: { trigger: el, start: START, once: true },
@@ -155,26 +155,50 @@ function initCounters() {
   });
 }
 
-// ---------- Magnetisch ----------
-function initMagnetic() {
-  if (!finePointer) return;
-  document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
-    const x = gsap.quickTo(el, 'x', { duration: 0.8, ease: 'elastic.out(1, 0.4)' });
-    const y = gsap.quickTo(el, 'y', { duration: 0.8, ease: 'elastic.out(1, 0.4)' });
-    el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      x((e.clientX - r.left - r.width / 2) * 0.25);
-      y((e.clientY - r.top - r.height / 2) * 0.35);
-    });
-    el.addEventListener('pointerleave', () => {
-      x(0);
-      y(0);
-    });
+// ---------- Hurenkinder vermeiden ----------
+// Die letzten zwei Woerter jeder Ueberschrift bleiben zusammen (geschuetztes
+// Leerzeichen), damit nie ein einzelnes Wort allein in der letzten Zeile steht.
+// Laeuft vor SplitText und auch mit "Bewegung reduzieren".
+function bindLastWords() {
+  document.querySelectorAll<HTMLElement>('h2, h3').forEach((h) => {
+    const walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    const text = nodes.map((n) => n.data).join('');
+    const end = text.trimEnd().length;
+    const words = text.trim().split(/\s+/);
+    if (words.length < 3) return;
+    const pos = text.slice(0, end).search(/\s\S*$/);
+    if (pos < 0) return;
+    let offset = pos;
+    for (const n of nodes) {
+      if (offset < n.data.length) {
+        // Leerzeichen direkt hinter einem Akzentwort (<em>): ein geschuetztes
+        // Leerzeichen am Knotenanfang bricht Chrome trotzdem um und zeigt es als
+        // Einzug. Dann Akzentwort + letztes Wort gemeinsam in nowrap einpacken.
+        const prev = n.previousSibling;
+        if (offset === 0 && prev instanceof HTMLElement) {
+          const word = n.data.match(/^\s+\S+/);
+          if (!word) return;
+          n.splitText(word[0].length);
+          n.data = '\u00A0' + n.data.trimStart();
+          const wrap = document.createElement('span');
+          wrap.style.whiteSpace = 'nowrap';
+          prev.before(wrap);
+          wrap.append(prev, n);
+          return;
+        }
+        n.data = n.data.slice(0, offset) + '\u00A0' + n.data.slice(offset + 1);
+        return;
+      }
+      offset -= n.data.length;
+    }
   });
 }
 
 async function init() {
   (window as unknown as { __motion: boolean }).__motion = true;
+  bindLastWords();
   if (reduceMotion) return;
   initLenis();
   // Zeilenumbrueche erst mit geladenen Fonts messen.
@@ -183,7 +207,6 @@ async function init() {
   initReveals();
   initParallax();
   initCounters();
-  initMagnetic();
   ScrollTrigger.refresh();
 }
 

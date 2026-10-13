@@ -21,11 +21,11 @@ const colors = [
 ];
 
 const type = [
-  { token: 't-display', spec: 'Georgia 96 / 96', sample: 'Steuern ohne Aktenordner' },
+  { token: 't-display', spec: 'Georgia 96 / 96', sample: 'Klarheit für Ihre Zahlen' },
   { token: 't-h2', spec: 'Georgia 64 / 76', sample: 'Steuerberatung, die mitdenkt statt abrechnet' },
   { token: 't-stat', spec: 'Georgia 54', sample: '180+' },
   { token: 't-h5', spec: 'Georgia 32 / 42', sample: 'Fester Ansprechpartner' },
-  { token: 't-body', spec: 'Inter 16 / 26', sample: 'Wir betreuen Mittelstand und Selbstständige in Düsseldorf. Vollständig digital, mit festem Ansprechpartner und festem Monatshonorar.' },
+  { token: 't-body', spec: 'Inter 16 / 26', sample: 'Wir beraten Unternehmen, Selbstständige und Privatpersonen in Düsseldorf: persönlich, vorausschauend und digital organisiert.' },
   { token: 't-small', spec: 'Inter 14 / 24', sample: 'Immer auf dem aktuellen Stand' },
   { token: 't-eyebrow', spec: 'Inter Medium 16 / 28, uppercase', sample: 'Digitale Steuerberatung' },
 ];
@@ -57,7 +57,7 @@ const radii = [
 
     <!-- Farben -->
     <section id={SECTION.kanzlei} class="container-site border-t border-black/10 py-20">
-      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+      <div class="grid gap-10 lg:grid-cols-[17.5rem_1fr]">
         <div>
           <Eyebrow>01 Farben</Eyebrow>
           <h2 class="t-h5 mt-2" data-split>Fünf Farben, ein Akzent</h2>
@@ -77,7 +77,7 @@ const radii = [
 
     <!-- Typografie -->
     <section id={SECTION.leistungen} class="container-site border-t border-black/10 py-20">
-      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+      <div class="grid gap-10 lg:grid-cols-[17.5rem_1fr]">
         <div>
           <Eyebrow>02 Typografie</Eyebrow>
           <h2 class="t-h5 mt-2" data-split>Georgia trifft Inter</h2>
@@ -87,7 +87,7 @@ const radii = [
         </div>
         <ul class="divide-y divide-black/10">
           {type.map((t) => (
-            <li class="grid gap-3 py-8 first:pt-0 md:grid-cols-[180px_1fr]" data-reveal="up">
+            <li class="grid gap-3 py-8 first:pt-0 md:grid-cols-[11.25rem_1fr]" data-reveal="up">
               <div class="t-small">
                 <p class="font-medium">.{t.token}</p>
                 <p class="text-black/60">{t.spec}</p>
@@ -101,7 +101,7 @@ const radii = [
 
     <!-- Bausteine -->
     <section id={SECTION.team} class="container-site border-t border-black/10 py-20">
-      <div class="grid gap-10 lg:grid-cols-[280px_1fr]">
+      <div class="grid gap-10 lg:grid-cols-[17.5rem_1fr]">
         <div>
           <Eyebrow>03 Bausteine</Eyebrow>
           <h2 class="t-h5 mt-2" data-split>Buttons &amp; Kacheln</h2>
@@ -122,8 +122,8 @@ const radii = [
             <ArrowTile href={`#${SECTION.termin}`} label="Termin vereinbaren" variant="dark" />
           </div>
           <div class="flex flex-wrap items-center gap-4 rounded-[var(--radius-card)] bg-paper p-8" data-reveal="up">
-            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
-            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
+            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
             <span class="t-small text-black/60">IconTile, 56 × 52</span>
           </div>
           <div class="flex flex-wrap items-center gap-6 rounded-[var(--radius-card)] bg-paper p-8 md:col-span-2" data-reveal="up">
@@ -141,10 +141,10 @@ const radii = [
     <!-- Motion -->
     <section id={SECTION.aktuelles} class="mt-10 rounded-t-[var(--radius-section)] bg-ink py-24 text-paper">
       <div class="container-site">
-        <div class="mx-auto max-w-[730px] text-center">
+        <div class="mx-auto max-w-[45.625rem] text-center">
           <Eyebrow>04 Motion</Eyebrow>
           <h2 class="t-h2 mt-3" data-split>Bewegung, die Ruhe ausstrahlt</h2>
-          <p class="t-body mx-auto mt-6 max-w-[500px] text-white/80" data-reveal="up">
+          <p class="t-body mx-auto mt-6 max-w-[31.25rem] text-white/80" data-reveal="up">
             Lenis-Smooth-Scroll, Zeilen-Reveals für Headlines, gestaffelte Einblendungen, Bild-Masken, Parallaxe und Zähler. Alles über data-Attribute, respektiert „Bewegung reduzieren“.
           </p>
         </div>
@@ -154,9 +154,9 @@ const radii = [
             ['15 Jahre', 'Erfahrung in der Beratung'],
             ['40+', 'Steuerberater im Team'],
             ['180+', 'Betreute Mandanten'],
-            ['24 Std.', 'Reaktionszeit werktags'],
+            ['3', 'Steuerberater im Team'],
           ].map(([n, l]) => (
-            <div class="flex flex-col gap-[15px] lg:px-12 lg:first:pl-0 lg:last:pr-0" data-reveal="up">
+            <div class="flex flex-col gap-[0.9375rem] lg:px-12 lg:first:pl-0 lg:last:pr-0" data-reveal="up">
               <p class="t-stat" data-counter>{n}</p>
               <p class="text-accent">{l}</p>
             </div>
@@ -164,19 +164,19 @@ const radii = [
         </div>
 
         <div class="mt-20 grid gap-3 md:grid-cols-3">
-          <div class="relative h-[354px] overflow-hidden rounded-[var(--radius-card)] bg-accent" data-reveal="image" data-radius="10px">
+          <div class="relative h-[22.125rem] overflow-hidden rounded-[var(--radius-card)] bg-accent" data-reveal="image">
             <div class="absolute inset-[-15%] bg-[radial-gradient(circle_at_30%_30%,#e88a4f,transparent_60%)]" data-parallax="0.12"></div>
             <p class="t-small absolute bottom-6 left-8">data-reveal="image" + data-parallax</p>
           </div>
-          <div class="flex h-[354px] flex-col justify-between rounded-[var(--radius-card)] bg-paper p-8 text-ink" data-reveal="up">
-            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+          <div class="flex h-[22.125rem] flex-col justify-between rounded-[var(--radius-card)] bg-paper p-8 text-ink" data-reveal="up">
+            <IconTile><Image src={scales} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
             <div>
               <h3 class="t-h5">Fester Ansprechpartner</h3>
               <p class="mt-3 text-black/60">Sie sprechen immer mit derselben Person. Kein Ticketsystem, keine Warteschleife.</p>
             </div>
           </div>
-          <div class="flex h-[354px] flex-col justify-between rounded-[var(--radius-card)] bg-accent p-8" data-reveal="up">
-            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+          <div class="flex h-[22.125rem] flex-col justify-between rounded-[var(--radius-card)] bg-accent p-8" data-reveal="up">
+            <IconTile><Image src={scan} alt="" width={24} height={24} densities={[2, 3]} class="size-6" /></IconTile>
             <div>
               <h3 class="t-h5">Feste Monatspauschale</h3>
               <p class="mt-3 text-white/60">Sie wissen vorab, was die Betreuung kostet.</p>
@@ -185,7 +185,7 @@ const radii = [
         </div>
 
         <div id={SECTION.termin} class="mt-24 flex justify-center pb-10">
-          <Button variant="accent" magnetic>Erstgespräch vereinbaren</Button>
+          <Button variant="accent">Erstgespräch vereinbaren</Button>
         </div>
       </div>
     </section>

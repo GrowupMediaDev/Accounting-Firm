@@ -1,94 +1,132 @@
 ---
-// Hero (Figma 1:4): helle Huelle auf Schwarz, freigestellte Partner rechts,
-// zwei schwebende Karten an der Unterkante. Intro-Timeline + Scroll-Parallaxe.
+// Hero in der Figma-Struktur (1:4): helle Huelle auf Schwarz, Text links,
+// zwei Karten ueber der Unterkante. Zwei Layouts (Profil hero.layout):
+//   cutout  freigestellte Personen (PNG) rechts, wie im Figma
+//   photo   normales Foto fuellt die Huelle, Verlauf hinter dem Text, helle Schrift
+// Veredelt durch Intro-Choreografie, Scroll-Verhalten und zwei echte
+// Mikro-Interaktionen: Live-Erreichbarkeit und eine Fristen-Sequenz.
+// Inhalte und Bilder aus dem Kanzlei-Profil (config/firm.ts).
 import { Image } from 'astro:assets';
 import Img from '../ui/Img.astro';
 import Button from '../ui/Button.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
-import IconTile from '../ui/IconTile.astro';
 import { SECTION } from '../../config/nav';
-import { rating } from '../../data/content';
-import partners from '../../assets/images/hero-partners.png';
-import papierlos from '../../assets/images/papierlos.jpg';
-import avatar1 from '../../assets/images/avatar-1.png';
-import avatar2 from '../../assets/images/avatar-2.png';
-import avatar3 from '../../assets/images/avatar-3.png';
+import { hours } from '../../config/site';
+import { img } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
 import papierlosIcon from '../../assets/icons/papierlos.png';
 import Star from '../../assets/icons/star.svg';
 
-const avatars = [avatar1, avatar2, avatar3];
+const c = firm.hero;
+const photo = c.layout === 'photo' && Boolean(c.photo);
+const rating = firm.rating;
+const avatars = c.avatars.map(img);
+const steps = c.deadlineSteps;
+// Erreichbarkeit aus den Oeffnungszeiten (einzige Quelle: config/site.ts).
+const dayRange = `${ui.weekdays[hours.days[0]]}–${ui.weekdays[hours.days[hours.days.length - 1]]}`;
+// Texte fuer den Live-Status (Script unten) in der Sprache der Seite.
+const statusText = { open: t('statusOpen'), later: ui.statusLaterToday, tomorrow: ui.statusTomorrow, onDay: ui.statusOnDay, days: ui.weekdaysShort };
 ---
-<section id={SECTION.start} class="hero" data-hero>
+<section id={SECTION.start} class:list={['hero', photo && 'hero--photo']} data-hero>
   <div class="hero__shell" data-hero-shell>
-    <div class="container-site hero__inner">
-      <div class="hero__copy">
-        <Eyebrow reveal={false} class="hero-fade">Digitale Steuerberatung</Eyebrow>
-        <h1 class="t-display mt-3" data-split="load" data-reveal-delay="0.35">Steuern ohne<br />Aktenordner</h1>
-        <p class="hero-fade mt-6 max-w-[350px]">
-          Wir betreuen Mittelstand und Selbstständige in Düsseldorf. Vollständig digital, mit festem Ansprechpartner und festem Monatshonorar.
-        </p>
-        <div class="hero-fade mt-[45px] flex flex-wrap gap-2.5">
-          <Button href={`#${SECTION.termin}`} magnetic>Erstgespräch vereinbaren</Button>
-          <Button href={`#${SECTION.leistungen}`} variant="light">Leistungen ansehen</Button>
+    {photo && (
+      <div class="hero__photo" aria-hidden={c.photoAlt ? undefined : 'true'}>
+        <div class="hero__photo-inner" data-hero-photo>
+          <Img
+            src={img(c.photo)}
+            alt={c.photoAlt}
+            sizes="100vw"
+            widths={[640, 960, 1280, 1600, 2000, 2560]}
+            priority
+            class="size-full object-cover"
+            style={`object-position:${c.photoFocus || '50% 50%'}`}
+            pictureClass="block size-full"
+          />
         </div>
       </div>
+    )}
+    <div class="hero__copy">
+      <Eyebrow reveal={false} class="hero-fade">{fill(c.eyebrow)}</Eyebrow>
+      <h1 class="hero__title">
+        {c.title.map((line) => <span class="hero__mask"><span data-hero-line>{fill(line)}</span></span>)}
+      </h1>
+      <p class="hero__text hero-fade mt-6 max-w-[22rem] text-[1.0625rem] leading-[1.6]">
+        {fill(c.text)}
+      </p>
+      <div class="hero-fade mt-10 flex flex-wrap gap-2.5">
+        <Button href={`#${SECTION.termin}`} variant={photo ? 'accent' : 'dark'}>{c.primaryCta}</Button>
+        {c.secondaryCta && <Button href={`#${SECTION.leistungen}`} variant="light">{c.secondaryCta}</Button>}
+      </div>
+      {c.note && <p class="hero-fade hero__note">{fill(c.note)}</p>}
     </div>
 
-    <div class="hero__partners">
+    {!photo && <div class="hero__partners">
       <div class="size-full" data-hero-partners>
-      <Img
-        src={partners}
-        alt="Die Partner Julia Vogt und Dr. Michael Hartmann"
-        sizes="(min-width: 1024px) 70vw, 120vw"
-        widths={[640, 960, 1280, 1600, 2000]}
-        priority
-        class="size-full object-contain object-bottom"
-        pictureClass="block size-full"
-      />
+        <Img
+          src={img(c.image)}
+          alt={c.imageAlt}
+          sizes="(min-width: 1024px) 70vw, 125vw"
+          widths={[640, 960, 1280, 1600, 2000, 2400]}
+          priority
+          class="size-full object-contain object-bottom"
+          pictureClass="block size-full"
+        />
       </div>
-    </div>
+    </div>}
   </div>
 
-  <div class="hero__cards container-site">
-    <!-- Reaktionszeit (Figma 20:84) -->
+  <div class="hero__cards">
+    <!-- Persoenliche Erreichbarkeit mit Live-Status -->
     <article class="hero-card hero-card--light" data-hero-card data-float="0.6">
-      <p class="t-small text-black">REAKTIONSZEIT</p>
-      <p class="t-small text-black/80">Immer auf dem aktuellen Stand</p>
-      <p class="mt-3 font-display text-[32px] leading-[42px]">24 Std.</p>
-      <p>Antwort auf Ihre Anfragen, werktags.</p>
-      <div class="mt-5 flex items-center gap-[18px]">
-        <div class="flex items-center">
-          {avatars.map((a, i) => (
-            <Image src={a} alt="" width={36} height={36} densities={[2, 3]} class="hero-avatar" style={`z-index:${i}`} />
-          ))}
-          <span class="hero-avatar grid place-items-center bg-accent text-[12px] text-white" style="z-index:3">+25</span>
-        </div>
-        <div class="whitespace-nowrap">
-          <div class="flex h-6 items-center gap-2">
-            <span class="flex gap-0.5" aria-hidden="true">
-              {Array.from({ length: 5 }).map(() => (
-                <span class="grid size-5 place-items-center"><Star width="18" height="18" /></span>
-              ))}
-            </span>
-            <span class="font-bold text-ink-soft">{rating.score}/{rating.max}</span>
-          </div>
-          <p class="text-ink-soft">{rating.clients} Mandanten betreut</p>
-        </div>
+      <div class="hero-card__top">
+        <p class="hero-card__label">{c.availabilityLabel}</p>
+        <p class="hero-status" data-status data-hours={JSON.stringify(hours)} data-text={JSON.stringify(statusText)}>
+          <span class="hero-status__dot" aria-hidden="true"></span>
+          <span data-status-text>{t('statusDefault')}</span>
+        </p>
       </div>
+      <p class="hero-card__big">{dayRange}</p>
+      <p class="hero-card__sub">{fill(c.availabilityText)}</p>
+      {rating.show && <div class="hero-card__rule" aria-hidden="true"></div>}
+      {rating.show && <div class="hero-trust">
+        <div class="hero-avatars" aria-hidden="true">
+          {avatars.map((a, i) => (
+            <Image src={a} alt="" width={32} height={32} densities={[2, 3]} class="hero-avatar" style={`z-index:${3 - i}`} />
+          ))}
+        </div>
+        <div class="hero-trust__text">
+          <p class="flex items-center gap-1.5">
+            <span class="hero-stars" aria-hidden="true">
+              {Array.from({ length: 5 }).map(() => <Star width="0.875rem" height="0.875rem" class="text-accent" data-star />)}
+            </span>
+            <span class="font-semibold">{rating.score}</span>
+            <span class="sr-only">{t('outOfStars')}</span>
+          </p>
+          <p class="text-black/60">{t('reviews', { count: rating.count, source: rating.source })}</p>
+        </div>
+      </div>}
     </article>
 
-    <!-- Papierlos arbeiten (Figma 22:310) -->
+    <!-- Fristen im Blick: Voranmeldung laeuft durch -->
     <article class="hero-card hero-card--accent" data-hero-card data-float="1">
-      <div class="flex items-center justify-between gap-2.5">
-        <p class="leading-7 text-white">DIGITALE STEUERBERATUNG</p>
-        <IconTile><Image src={papierlosIcon} alt="" width={24} height={24} densities={[2, 3]} /></IconTile>
+      <div class="hero-card__top">
+        <p class="hero-card__big text-white">{c.deadlineTitle}</p>
+        <span class="hero-card__icon" aria-hidden="true"><Image src={papierlosIcon} alt="" width={20} height={20} densities={[2, 3]} class="size-5" /></span>
       </div>
-      <p class="mt-3 font-display text-[32px] leading-[42px] text-white">Papierlos arbeiten</p>
-      <span class="mt-3 block h-0.5 w-[69px] bg-white" aria-hidden="true"></span>
-      <div class="mt-3 h-[158px] overflow-hidden rounded-[var(--radius-media)]">
-        <Img src={papierlos} alt="Handwerker in seiner Werkstatt" sizes="320px" widths={[320, 640, 960]} class="size-full object-cover" pictureClass="block size-full" />
+      <div class="hero-doc">
+        <Img src={img(c.deadlineImage)} alt={c.deadlineImageAlt} sizes="(min-width: 1440px) 22vw, 320px" widths={[320, 640, 960]} class="size-full object-cover" pictureClass="block size-full" />
+        <div class="hero-doc__chip" data-doc data-item={c.deadlineItem} data-start={c.deadlineStart} data-months={JSON.stringify(ui.months)} aria-hidden="true">
+          <div class="hero-doc__row">
+            <span class="hero-doc__file">{c.deadlineItem} {ui.months[4]}</span>
+            <span class="hero-doc__state" data-doc-label>{c.deadlineStart}</span>
+          </div>
+          <div class="hero-doc__steps">
+            {steps.map((s, i) => <span class="hero-doc__seg" data-step={i} data-label={s}></span>)}
+          </div>
+        </div>
       </div>
-      <p class="mt-3 max-w-[300px] text-white">Belege hochladen, Auswertungen abrufen. Jederzeit von überall.</p>
+      <p class="hero-card__sub">{fill(c.deadlineText)}</p>
     </article>
   </div>
 </section>
@@ -97,95 +135,284 @@ const avatars = [avatar1, avatar2, avatar3];
   .hero {
     position: relative;
     background: var(--color-ink);
-    padding: 10px 10px 0;
+    padding: 0.625rem 0.625rem 0;
   }
   .hero__shell {
     position: relative;
     overflow: hidden;
-    border-radius: var(--radius-media);
+    border-radius: var(--radius-section);
     background: var(--color-sky);
-    padding-top: calc(var(--header-h) + 130px);
+    /* Seitlicher Abstand = Inhaltsspalte, damit Text mit Logo und Karten fluchtet. */
+    padding: calc(var(--header-h) + 7rem) max(calc(var(--gutter) - 0.625rem), calc((100% - var(--container-site)) / 2)) 0;
+    transform-origin: 50% 100%;
   }
-  .hero__inner {
-    position: relative;
-    z-index: 2;
-    padding-inline: calc(var(--gutter) - 10px);
+  .hero__copy { position: relative; z-index: 2; }
+  .hero__text { color: rgb(0 0 0 / 0.8); }
+
+  /* ---------- Layout "photo": Foto fuellt die Huelle ---------- */
+  .hero__photo { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  /* Etwas hoeher als die Huelle: Spielraum fuer Einstiegs-Zoom und Scroll-Parallaxe. */
+  .hero__photo-inner { position: absolute; inset: -6% 0; }
+  /* Verlauf oben (Header), hinter dem Text (links) und zur Unterkante (Karten). */
+  .hero__photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(0 0 0 / 0.4) 0%, rgb(0 0 0 / 0) 22%),
+      linear-gradient(90deg, rgb(0 0 0 / 0.62) 0%, rgb(0 0 0 / 0.38) 42%, rgb(0 0 0 / 0) 72%),
+      linear-gradient(0deg, rgb(0 0 0 / 0.45) 0%, rgb(0 0 0 / 0) 35%);
   }
+  .hero--photo .hero__shell { background: var(--color-ink); color: var(--color-paper); }
+  .hero--photo .hero__copy { --eyebrow-color: rgb(255 255 255 / 0.85); }
+  .hero--photo .hero__text { color: rgb(255 255 255 / 0.86); }
+  .hero--photo .hero__note { color: rgb(255 255 255 / 0.75); }
+  @media (max-width: 1023px) {
+    /* Mobil/Tablet: Text liegt ueber dem ganzen Foto, Verlauf von oben. */
+    .hero--photo .hero__shell { min-height: max(34rem, 78svh); padding-bottom: 3rem; }
+    .hero__photo::after {
+      background: linear-gradient(180deg, rgb(0 0 0 / 0.58) 0%, rgb(0 0 0 / 0.42) 55%, rgb(0 0 0 / 0.2) 100%);
+    }
+  }
+  .hero__title {
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    /* Figma: 96px bei 1440 (eigene Skala, unabhaengig vom groesseren --fs-display) */
+    font-size: clamp(3rem, 1.89rem + 4.571vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  /* Mobil groesser: waechst mit der Breite (~64px bei 390), gedeckelt auf den
+     Desktop-Wert bei 768, damit es am Umbruch nicht springt. */
+  @media (max-width: 767px) {
+    .hero__title { font-size: min(16.5vw, 4.0625rem); }
+  }
+  /* Einwand vorwegnehmen: direkt unter den Buttons */
+  .hero__note {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: rgb(0 0 0 / 0.6);
+  }
+  .hero__note::before {
+    content: '';
+    width: 0.375rem;
+    height: 0.375rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+  .hero__mask { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; white-space: nowrap; }
+  .hero__mask > span { display: inline-block; }
+
   .hero__partners {
     position: relative;
     z-index: 1;
-    width: 128%;
-    margin: 24px -14% 0;
+    width: 125%;
+    margin: 1.5rem -12.5% -8%;
     aspect-ratio: 2835 / 2400;
-    margin-bottom: -10%;
   }
+
   .hero__cards {
     position: relative;
     z-index: 3;
     display: grid;
-    gap: 12px;
-    margin-top: 12px;
-    padding-inline: calc(var(--gutter) - 10px);
-    padding-bottom: 60px;
+    gap: 0.75rem;
+    padding: 0.75rem calc(var(--gutter) - 0.625rem) 3.75rem;
   }
+  /* Karten: gleiche Radien, weicher Schatten, klare Hierarchie */
   .hero-card {
+    display: flex;
+    flex-direction: column;
     border-radius: var(--radius-card);
-    padding: 12px 24px 16px;
+    box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.35);
     will-change: transform;
   }
-  .hero-card--light { background: var(--color-paper); }
-  .hero-card--accent { background: var(--color-accent); padding: 24px; }
+  .hero-card--light { background: var(--color-paper); padding: 1.125rem 1.375rem 1.25rem; }
+  .hero-card--accent { background: var(--color-accent); padding: 1.125rem 1.125rem 1.25rem; gap: 0.875rem; }
+  .hero-card__top { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .hero-card__label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(0 0 0 / 0.62);
+  }
+  .hero-card__big {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .hero-card--light .hero-card__big { margin-top: 0.875rem; }
+  .hero-card--accent .hero-card__big { font-size: 1.75rem; }
+  .hero-card__sub { margin-top: 0.25rem; font-size: 0.9375rem; line-height: 1.45; color: rgb(0 0 0 / 0.65); }
+  /* Weiss voll deckend: auf dem Akzent-Orange schon nahe an der Kontrastgrenze. */
+  .hero-card--accent .hero-card__sub { margin-top: 0; color: var(--color-paper); }
+  .hero-card__rule { height: 1px; margin: 1rem 0 0.875rem; background: rgb(0 0 0 / 0.08); }
+  .hero-card__icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-btn);
+    background: rgb(0 0 0 / 0.85);
+  }
+
+  /* Live-Status: ruhig, nur Punkt + Text */
+  .hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: rgb(0 0 0 / 0.6);
+    white-space: nowrap;
+  }
+  .hero-status__dot {
+    position: relative;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: #a3acae;
+  }
+  .hero-status[data-open] { color: #17763f; }
+  .hero-status[data-open] .hero-status__dot { background: #1f9d55; }
+  .hero-status[data-open] .hero-status__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: inherit;
+    animation: pulse 2s ease-out infinite;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); opacity: 0.6; }
+    to { transform: scale(3); opacity: 0; }
+  }
+
+  /* Vertrauenszeile */
+  .hero-trust { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; line-height: 1.35; }
+  .hero-avatars { display: flex; align-items: center; }
   .hero-avatar {
-    width: 35px;
-    height: 36px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 999px;
     object-fit: cover;
-    margin-left: -11px;
+    margin-left: -0.5rem;
     position: relative;
+    box-shadow: 0 0 0 2px var(--color-paper);
+    transition: margin 0.5s var(--ease-out-expo);
   }
   .hero-avatar:first-child { margin-left: 0; }
+  .hero-card--light:hover .hero-avatar:not(:first-child) { margin-left: -0.125rem; }
+  .hero-stars { display: flex; gap: 0.0625rem; }
+
+  /* Beleg-Sequenz */
+  .hero-doc {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+  }
+  .hero-doc__chip {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    width: min(13.5rem, calc(100% - 1rem));
+    padding: 0.5rem 0.625rem 0.5625rem;
+    border-radius: var(--radius-btn);
+    background: rgb(255 255 255 / 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0.5rem 1.5rem -0.75rem rgb(0 0 0 / 0.4);
+    color: var(--color-ink);
+    font-size: 0.6875rem;
+    line-height: 1;
+  }
+  .hero-doc__row { display: flex; justify-content: space-between; gap: 0.5rem; white-space: nowrap; }
+  .hero-doc__file { font-weight: 600; }
+  .hero-doc__state { color: var(--color-accent-ink); font-weight: 500; }
+  .hero-doc__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.1875rem; margin-top: 0.4375rem; }
+  .hero-doc__seg {
+    position: relative;
+    height: 0.1875rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: rgb(0 0 0 / 0.1);
+  }
+  .hero-doc__seg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.8s var(--ease-in-out-expo);
+  }
+  .hero-doc__seg.is-done::after { transform: scaleX(1); }
 
   @media (min-width: 640px) {
     .hero__cards { grid-template-columns: 1fr 1fr; align-items: end; }
   }
 
   @media (min-width: 1024px) {
+    .hero { padding-bottom: 8.5rem; }
     .hero__shell {
-      min-height: 832px;
-      padding-top: calc(var(--header-h) + 140px);
+      /* Fuellt den Viewport, aber nie kuerzer als der Inhalt braucht
+         (sonst ruecken die Karten in die Buttons). */
+      height: max(calc(100svh - 9.125rem), 47rem);
+      max-height: 64rem;
+      padding-top: calc(var(--header-h) + 5rem);
     }
-    .hero__copy { max-width: 590px; }
+    .hero__copy { max-width: 37rem; }
     .hero__partners {
       position: absolute;
-      right: -3%;
+      /* An der Inhaltsspalte verankert (nicht am Huellenrand), ragt wie in Figma
+         ~9 % der Bildbreite darueber hinaus. Auf breiten Screens kein Loch in der Mitte. */
+      right: max(calc((100% - var(--container-site)) / 2), calc(var(--gutter) - 0.625rem));
       bottom: 0;
-      width: clamp(600px, 70.8%, 1005px);
+      /* Figma-Proportion (70.8 % der Huellenbreite), aber nie hoeher als die Huelle. */
+      width: min(70.8%, calc(max(100svh - 9.125rem, 47rem) * 1.2));
       margin: 0;
-      transform: translateY(8.5%);
+      transform: translate(9.4%, 8.5%);
     }
     .hero__cards {
       position: absolute;
-      inset: auto 0 7px;
+      inset: auto 0 0.4375rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      margin: 0 auto;
-      padding-inline: var(--gutter);
-      padding-bottom: 0;
+      max-width: calc(var(--container-site) + var(--gutter) * 2);
+      margin-inline: auto;
+      padding: 0 var(--gutter);
       pointer-events: none;
     }
     .hero__cards > * { pointer-events: auto; }
-    .hero-card--light { width: 355px; margin-left: -2px; }
-    .hero-card--accent { width: 357px; margin-bottom: 7px; margin-right: 1px; }
-    .hero { padding-bottom: 139px; }
+    .hero-card--light { width: 21rem; }
+    .hero-card--accent { width: 20rem; margin-bottom: 0.4375rem; }
   }
 
+  /* 1024-1199px: breitere Schriften brauchen mehr Platz, Partner weiter nach rechts. */
+  @media (min-width: 1024px) and (max-width: 1199px) {
+    .hero__partners { right: -12%; width: min(64%, calc(max(100svh - 9.125rem, 47rem) * 1.2)); }
+  }
+
+  /* Startzustaende fuer das Intro */
   @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) [data-hero-card],
+    :global(html.js) [data-hero-line] { transform: translateY(105%); }
+    :global(html.js) [data-hero-shell] { transform: translateY(22vh); }
     :global(html.js) .hero-fade,
-    :global(html.js) [data-hero-partners] {
-      opacity: 0;
-    }
+    :global(html.js) [data-hero-card],
+    :global(html.js) [data-hero-partners],
+    :global(html.js) [data-hero-photo] { opacity: 0; }
+    /* Header faellt mit dem Intro ein (gleiche Auswahl wie HEADER_ITEMS im Script). */
+    :global(html.js .site-header__bar > :first-child),
+    :global(html.js .site-header__nav li),
+    :global(html.js .site-header__bar > :last-child > *) { opacity: 0; }
   }
 </style>
 
@@ -195,51 +422,128 @@ const avatars = [avatar1, avatar2, avatar3];
   gsap.registerPlugin(ScrollTrigger);
 
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Header-Elemente, die mit dem Intro einfallen (Startzustand im CSS unten).
+  const HEADER_ITEMS = '.site-header__bar > :first-child, .site-header__nav li, .site-header__bar > :last-child > *';
 
+  // ---------- Live-Erreichbarkeit (laeuft auch ohne Animation) ----------
+  const status = hero?.querySelector<HTMLElement>('[data-status]');
+  if (status) {
+    const h = JSON.parse(status.dataset.hours!) as { days: number[]; open: number; close: number; timeZone: string };
+    const text = status.querySelector('[data-status-text]')!;
+    const s = JSON.parse(status.dataset.text!) as { open: string; later: string; tomorrow: string; onDay: string; days: string[] };
+    const say = (tpl: string, day = '') => tpl.replace('{time}', `${h.open}:00`).replace('{day}', day);
+    // Wochentag wird aus der deutschen Kurzform gelesen (Zeitzone der Kanzlei).
+    const dayNames = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+    const update = () => {
+      const parts = new Intl.DateTimeFormat('de-DE', { timeZone: h.timeZone, weekday: 'short', hour: 'numeric', hour12: false }).formatToParts(new Date());
+      const wd = dayNames.indexOf((parts.find((p) => p.type === 'weekday')?.value ?? '').replace('.', ''));
+      const hr = Number(parts.find((p) => p.type === 'hour')?.value ?? 0);
+      const open = h.days.includes(wd) && hr >= h.open && hr < h.close;
+      status.toggleAttribute('data-open', open);
+      if (open) { text.textContent = s.open; return; }
+      // Naechster Oeffnungstag
+      let d = wd;
+      let add = 0;
+      do { d = (d + 1) % 7; add++; } while (!h.days.includes(d) && add < 8);
+      const laterToday = h.days.includes(wd) && hr < h.open;
+      text.textContent = laterToday ? say(s.later) : add === 1 ? say(s.tomorrow) : say(s.onDay, s.days[d]);
+    };
+    update();
+    setInterval(update, 60_000);
+  }
+
+  // ---------- Fristen-Sequenz: Vorbereitet -> Geprueft -> Uebermittelt, Monat fuer Monat ----------
+  const doc = hero?.querySelector<HTMLElement>('[data-doc]');
+  if (doc) {
+    const segs = [...doc.querySelectorAll<HTMLElement>('[data-step]')];
+    const label = doc.querySelector<HTMLElement>('[data-doc-label]')!;
+    const file = doc.querySelector<HTMLElement>('.hero-doc__file')!;
+    const last = segs[segs.length - 1]?.dataset.label ?? '';
+    const done = () => { segs.forEach((s) => s.classList.add('is-done')); label.textContent = `${last} ✓`; };
+    const months = JSON.parse(doc.dataset.months!) as string[];
+    if (reduce) {
+      done();
+    } else {
+      let m = 4; // Mai
+      const loop = gsap.timeline({ repeat: -1, paused: true });
+      segs.forEach((s, i) => {
+        loop.add(() => { s.classList.add('is-done'); label.textContent = s.dataset.label + (i === segs.length - 1 ? ' ✓' : ''); }, i * 1.1 + 0.4);
+      });
+      // Halten, dann am ENDE zuruecksetzen (Callbacks am Anfang feuern bei repeat nicht zuverlaessig).
+      loop.add(() => {
+        segs.forEach((s) => s.classList.remove('is-done'));
+        m = (m + 1) % 12;
+        file.textContent = `${doc.dataset.item} ${months[m]}`;
+        label.textContent = doc.dataset.start ?? '';
+      }, segs.length * 1.1 + 1.8)
+        .to({}, { duration: 0.6 });
+      // Laeuft erst nach dem Intro und nur, solange sichtbar.
+      let visible = false;
+      let ready = false;
+      const sync = () => (visible && ready ? loop.play() : loop.pause());
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); }).observe(doc);
+      window.addEventListener('hv:hero-done', () => { ready = true; sync(); }, { once: true });
+    }
+  }
+
+  if (reduce) window.dispatchEvent(new Event('hv:hero-done'));
+
+  // ---------- Intro + Scroll ----------
   if (hero && !reduce) {
-    const shell = hero.querySelector('[data-hero-shell]');
-    const partners = hero.querySelector('[data-hero-partners]');
-    const cards = hero.querySelectorAll<HTMLElement>('[data-hero-card]');
-    const fades = hero.querySelectorAll('.hero-fade');
+    const q = (s: string) => hero.querySelectorAll<HTMLElement>(s);
+    const shell = hero.querySelector<HTMLElement>('[data-hero-shell]')!;
 
-    // Intro
-    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-    tl.from(shell, { scale: 0.965, borderRadius: 32, duration: 1.6, ease: 'expo.inOut' }, 0)
-      .fromTo(partners, { opacity: 0, y: 90, scale: 1.04 }, { opacity: 1, y: 0, scale: 1, duration: 1.8 }, 0.45)
-      .fromTo(fades, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, clearProps: 'transform' }, 0.55)
-      .fromTo(
-        cards,
-        { opacity: 0, y: 90, rotate: (i: number) => (i ? 4 : -4) },
-        { opacity: 1, y: 0, rotate: 0, duration: 1.5, stagger: 0.12 },
-        0.9,
-      );
+    const headerItems = document.querySelectorAll<HTMLElement>(HEADER_ITEMS);
+    const intro = () => {
+      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+      // Parallaxe-Einstieg: alle Ebenen steigen von unten auf, jede mit eigener
+      // Tiefe (Huelle wenig, Foto mehr, Karten am meisten) und kommen gemeinsam
+      // zur Ruhe. Nach dem Preloader laeuft das unter dem hochfahrenden Vorhang.
+      // Oeffnet sich der Preloader in der Mitte ("split"), kommt der Hero aus der
+      // Tiefe: Huelle steigt weniger, das Foto kommt aus groesserer Naehe.
+      const zoom = (window as unknown as { __hvExit?: string }).__hvExit === 'split';
+      tl.fromTo(shell, { y: () => innerHeight * (zoom ? 0.08 : 0.22) }, { y: 0, duration: 1.7 }, 0)
+        // Layout "photo": das Foto kommt aus der Naehe (Zoom), statt aufzusteigen.
+        .fromTo(q('[data-hero-photo]'), { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 2.1 }, 0)
+        .fromTo(q('[data-hero-partners]'), { opacity: 0, y: () => innerHeight * 0.16, scale: zoom ? 1.18 : 1.06 }, { opacity: 1, y: 0, scale: 1, duration: 1.9 }, 0.05)
+        .to(q('[data-hero-line]'), { y: 0, duration: 1.4, stagger: 0.1 }, 0.25)
+        .fromTo(q('.hero-fade'), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.4, stagger: 0.07, clearProps: 'transform' }, 0.35)
+        .fromTo(q('[data-hero-card]'), { opacity: 0, y: () => innerHeight * 0.3, rotate: (i: number) => (i ? 4 : -4) }, { opacity: 1, y: 0, rotate: 0, duration: 1.8, stagger: 0.1 }, 0.2)
+        // Header kommt mit: Logo, Navigation, Buttons fallen nacheinander ein.
+        .fromTo(headerItems, { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.06, clearProps: 'transform' }, 0.55)
+        .from(q('[data-star]'), { scale: 0, duration: 0.6, ease: 'back.out(3)', stagger: 0.06, transformOrigin: '50% 50%' }, 1.2)
+        .add(() => window.dispatchEvent(new Event('hv:hero-done')), 1.6);
+    };
+    const w = window as unknown as { __hvReady?: boolean };
+    if (w.__hvReady || !document.querySelector('[data-preloader]')) intro();
+    else window.addEventListener('hv:ready', intro, { once: true });
 
-    const mm = gsap.matchMedia();
-    mm.add('(min-width: 1024px)', () => {
-      // Scroll: Partner sinken leicht, Karten steigen unterschiedlich schnell.
-      gsap.to(partners, {
-        yPercent: 8,
-        ease: 'none',
-        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-      });
-      cards.forEach((card) => {
+    gsap.matchMedia().add('(min-width: 1024px)', () => {
+      const st = { trigger: hero, start: 'top top', end: 'bottom top', scrub: true };
+      gsap.to(q('[data-hero-partners]'), { yPercent: 8, ease: 'none', scrollTrigger: st });
+      gsap.to(q('[data-hero-photo]'), { yPercent: 5, ease: 'none', scrollTrigger: st });
+      q('[data-hero-card]').forEach((card) => {
         const f = parseFloat(card.dataset.float || '1');
-        gsap.to(card, {
-          yPercent: -22 * f,
-          ease: 'none',
-          scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true },
-        });
+        gsap.to(card, { yPercent: -22 * f, ease: 'none', scrollTrigger: st });
       });
-      // Maus: Karten folgen dem Cursor minimal.
-      if (window.matchMedia('(pointer: fine)').matches) {
-        const movers = [...cards].map((c) => ({
+      // Huelle tritt beim Weiterscrollen leicht zurueck.
+      gsap.to(shell, {
+        scale: 0.96,
+        ease: 'none',
+        scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 20%', scrub: true },
+      });
+
+      if (matchMedia('(pointer: fine)').matches) {
+        const movers = [...q('[data-hero-card]')].map((c) => ({
           x: gsap.quickTo(c, 'x', { duration: 1.2, ease: 'power3.out' }),
           f: parseFloat(c.dataset.float || '1'),
         }));
+        const px = gsap.quickTo(q('[data-hero-partners]')[0], 'x', { duration: 1.6, ease: 'power3.out' });
         const onMove = (e: PointerEvent) => {
-          const dx = e.clientX / window.innerWidth - 0.5;
-          movers.forEach((m) => m.x(dx * 14 * m.f));
+          const dx = e.clientX / innerWidth - 0.5;
+          movers.forEach((m) => m.x(dx * 16 * m.f));
+          px(dx * -12);
         };
         hero.addEventListener('pointermove', onMove);
         return () => hero.removeEventListener('pointermove', onMove);

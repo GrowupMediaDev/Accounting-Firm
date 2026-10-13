@@ -1,27 +1,169 @@
 ---
-// Unser Ansatz (Figma 26:2825): Bild links mit Masken-Reveal und Parallaxe, Text rechts.
+// Unser Ansatz (Figma 26:2825): Bild links, Text rechts. Das Bild bekommt zwei
+// Berater-Notizen auf dem Bericht, der zweite Absatz wird zur Signal-Liste mit
+// Mini-Balkendiagrammen, die beim Scrollen wachsen. Notiz-Werte sind illustrativ.
 import Img from '../ui/Img.astro';
-import Button from '../ui/Button.astro';
+import CtaPair from '../ui/CtaPair.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
 import { SECTION } from '../../config/nav';
-import ansatz from '../../assets/images/ansatz.jpg';
+import { img } from '../../config/firm';
+import { useI18n } from '../../i18n';
+const { f: firm, fill, rich, t, ui, locale } = useI18n(Astro.url);
+
+const c = firm.ansatz;
+// Mini-Balkendiagramme im Stil der Bildmarke: letzter Balken in Akzentfarbe.
+const signals = c.signals;
 ---
-<section class="container-site grid gap-12 pb-20 pt-[50px] lg:grid-cols-2 lg:gap-16">
-  <div class="relative min-h-[420px] overflow-hidden rounded-[var(--radius-media)] lg:min-h-[670px]" data-reveal="image">
+<section class="ansatz container-site" data-ansatz>
+  <div class="ansatz__media" data-reveal="image">
     <div class="absolute inset-x-0 -inset-y-[8%]" data-parallax="0.06">
-      <Img src={ansatz} alt="Steuerberaterin bespricht die Monatsauswertung mit einer Mandantin" sizes="(min-width: 1024px) 50vw, 100vw" class="size-full object-cover" pictureClass="block size-full" />
+      <Img src={img(c.image)} alt={c.imageAlt} sizes="(min-width: 1024px) 50vw, 100vw" class="size-full object-cover" pictureClass="block size-full" />
+    </div>
+    <div class="ansatz-note ansatz-note--a" aria-hidden="true">
+      <span class="ansatz-note__dot"></span>
+      <span><strong>{c.noteValue}</strong> {c.noteText}</span>
+    </div>
+    <div class="ansatz-note ansatz-note--b" aria-hidden="true">
+      <span class="ansatz-note__tag">{c.noteTag}</span>
+      <span>{c.noteAction}</span>
     </div>
   </div>
 
-  <div class="flex flex-col justify-center gap-16 lg:py-20">
-    <div>
-      <Eyebrow>Unser Ansatz</Eyebrow>
-      <h2 class="t-h3 mt-1.5" data-split>Zahlen sind erst der Anfang der Beratung</h2>
-      <div class="mt-6 flex max-w-[516px] flex-col gap-[18px] text-[18px] leading-[27px] text-black/80">
-        <p data-reveal="up">Die meisten Unternehmer bekommen einmal im Monat eine BWA und wissen danach genauso viel wie vorher. Wir gehen die Auswertung mit Ihnen durch und erklären, was die Zahlen für Ihre nächsten Entscheidungen bedeuten: Einstellung, Investition, Preiserhöhung.</p>
-        <p data-reveal="up">Dazu gehört, dass wir uns melden, wenn uns etwas auffällt. Sinkende Margen, wachsende Forderungen, eine Steuernachzahlung, die im nächsten Quartal fällig wird. Nicht erst beim Jahresabschluss.</p>
-      </div>
+  <div class="ansatz__copy">
+    <Eyebrow>{c.eyebrow}</Eyebrow>
+    <h2 class="t-h3 mt-1.5" data-split set:html={rich(c.heading)} />
+    <p class="ansatz__lead" data-reveal="up">{fill(c.lead)}</p>
+
+    <div class="ansatz__signals" data-reveal="up">
+      <p class="ansatz__label">{c.signalsLabel}</p>
+      <ul>
+        {signals.map((s, i) => (
+          <li style={`--i:${i}`}>
+            <span>{fill(s.label)}</span>
+<span class="ansatz__bars" aria-hidden="true">
+              {s.bars.map((h, j) => <span style={`--h:${h}%;--j:${j}`}></span>)}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="ansatz__foot">{fill(c.foot)}</p>
     </div>
-    <div data-reveal="up"><Button href={`#${SECTION.termin}`}>Erstgespräch vereinbaren</Button></div>
+
+    <div class="mt-10" data-reveal="up">
+      <CtaPair href={`#${SECTION.termin}`} label={c.cta} />
+    </div>
   </div>
 </section>
+
+<style>
+  .ansatz {
+    display: grid;
+    gap: 3rem;
+    padding-top: 3.125rem;
+    padding-bottom: 5rem;
+  }
+  @media (min-width: 1024px) {
+    .ansatz { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4rem; align-items: center; }
+  }
+
+  .ansatz__media {
+    position: relative;
+    min-height: 26rem;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+  }
+  @media (min-width: 1024px) {
+    .ansatz__media { min-height: 42rem; height: 100%; }
+  }
+
+  /* Berater-Notizen */
+  .ansatz-note {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: calc(100% - 2rem);
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-sm);
+    background: rgb(255 255 255 / 0.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1rem 2rem -1rem rgb(0 0 0 / 0.45);
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    color: var(--color-ink);
+    transition: opacity 0.6s, transform 0.9s var(--ease-out-expo);
+  }
+  .ansatz-note strong { font-weight: 600; }
+  /* Mobil: Notiz A auf dem Bericht unten rechts, B oben links (Gesichter frei). */
+  .ansatz-note--a { right: 1rem; bottom: 1rem; transition-delay: 1.3s; }
+  .ansatz-note--b { left: 1rem; top: 1rem; flex-direction: column; align-items: flex-start; gap: 0.2rem; transition-delay: 1.6s; }
+  .ansatz-note__dot { width: 0.5rem; height: 0.5rem; flex-shrink: 0; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 0 4px rgb(var(--accent-rgb) / 0.18); }
+  .ansatz-note__tag { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent-ink); }
+  @media (min-width: 1024px) {
+    .ansatz-note { font-size: 0.875rem; }
+    .ansatz-note--a { right: 1.5rem; top: 48%; bottom: auto; }
+    .ansatz-note--b { left: 1.5rem; bottom: 1.5rem; top: auto; }
+  }
+
+  /* Text */
+  .ansatz__lead { margin-top: 1.5rem; max-width: 36rem; font-size: 1.1875rem; line-height: 1.55; letter-spacing: -0.01em; color: var(--color-ink); }
+  /* Liste laeuft bis zur Kante der Inhaltsspalte (fluchtet mit den Leistungs-Linien). */
+  .ansatz__signals { margin-top: 2.5rem; }
+  .ansatz__label { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgb(0 0 0 / 0.55); }
+  .ansatz__signals ul { margin-top: 0.75rem; border-top: 1px solid rgb(0 0 0 / 0.12); }
+  .ansatz__signals li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid rgb(0 0 0 / 0.12);
+    font-size: 1rem;
+  }
+  .ansatz__bars { display: flex; align-items: flex-end; gap: 0.1875rem; height: 1.625rem; flex-shrink: 0; }
+  .ansatz__bars span {
+    width: 0.3125rem;
+    height: var(--h);
+    border-radius: 1px;
+    background: rgb(0 0 0 / 0.16);
+    transform-origin: 50% 100%;
+    transition: transform 0.9s var(--ease-out-expo);
+    transition-delay: calc(0.4s + var(--i) * 0.15s + var(--j) * 0.06s);
+  }
+  .ansatz__bars span:last-child { background: var(--color-accent); }
+  /* Ruhige Schleife nach dem Einwachsen: Balken atmen als Welle von links nach
+     rechts. Laeuft ueber `scale`, das Einwachsen ueber `transform`, beides addiert. */
+  @keyframes ansatz-bar {
+    0%, 100% { scale: 1 1; }
+    50% { scale: 1 0.78; }
+  }
+  @keyframes ansatz-bar-accent {
+    0%, 100% { scale: 1 1; }
+    50% { scale: 1 0.62; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ansatz__bars span {
+      animation: ansatz-bar 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      animation-delay: calc(var(--j) * 0.18s + var(--i) * 0.5s - 3.2s);
+    }
+    .ansatz__bars span:last-child { animation-name: ansatz-bar-accent; }
+  }
+  .ansatz__foot { margin-top: 1rem; font-size: 0.9375rem; color: rgb(0 0 0 / 0.6); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .ansatz:not(.is-on) .ansatz-note { opacity: 0; transform: translateY(0.75rem) scale(0.94); }
+    :global(html.js) .ansatz:not(.is-on) .ansatz__bars span { transform: scaleY(0); }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-ansatz]');
+  if (root) {
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { root.classList.add('is-on'); io.disconnect(); }
+    }, { rootMargin: '0px 0px -25% 0px' });
+    io.observe(root);
+  }
+</script>

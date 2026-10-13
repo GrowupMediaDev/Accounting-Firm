@@ -1,0 +1,144 @@
+---
+// Preloader: Logo-Moment ohne Lesestoff. Die drei Balken der Bildmarke wachsen
+// nacheinander, ein Lichtstreif zieht ueber die Marke, die Wortmarke hebt sich.
+// Abgang: Das Logo tritt zurueck, die schwarze Flaeche reisst in der Mitte auf,
+// die Haelften fahren nach oben und unten auseinander. Hero.astro startet sein
+// Intro auf 'hv:ready' (window.__hvExit = 'split': Hero kommt aus der Tiefe).
+//
+// Kanzleineutral: Bildmarke und Name aus dem Kanzlei-Profil. SVG-Marken wachsen
+// Pfad fuer Pfad; Rasterbilder bzw. ein komplettes Logo-Bild werden von unten
+// aufgedeckt (dann ohne Wortmarke, die steckt im Bild).
+// Nur einmal pro Sitzung, nie bei Direktlinks, ohne JS oder mit "Bewegung
+// reduzieren". Erzwingen zum Ansehen: ?intro.
+import { Image } from 'astro:assets';
+import { firm, img, logoMark } from '../../config/firm';
+
+const b = firm.brand;
+const full = b.logoImage ? img(b.logoImageLight || b.logoImage) : null;
+const mark = full ? null : logoMark();
+const Mark = mark?.svg as any;
+const raster = full ?? mark?.image;
+---
+<div class="preloader" data-preloader aria-hidden="true">
+  <div class="pl-half pl-half--top" data-pl-half></div>
+  <div class="pl-half pl-half--bottom" data-pl-half></div>
+  <div class="pl-inner" data-pl-inner>
+    {Mark ? (
+      <div class="pl-mark">
+        <Mark class:list={['pl-mark__svg', b.tintMark && 'pl-mark__svg--tint']} data-pl-mark />
+        <!-- Lichtstreif: helle Kopie der Marke, nur im wandernden Maskenband sichtbar -->
+        <Mark class="pl-mark__svg pl-mark__shine" data-pl-shine />
+      </div>
+    ) : (
+      <div class:list={['pl-raster', full && 'pl-raster--full', full && !b.logoImageLight && 'pl-raster--invert']} data-pl-raster>
+        <Image src={raster!} alt="" height={full ? 120 : 90} densities={[1, 2]} loading="eager" />
+      </div>
+    )}
+    {!full && b.wordmark && (
+      <p class="pl-word" data-pl-word>
+        {[...b.wordmark].map((c) => <span class="pl-word__mask"><span data-pl-char>{c === ' ' ? '\u00a0' : c}</span></span>)}
+      </p>
+    )}
+  </div>
+</div>
+
+<style>
+  .preloader { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js:not(.hv-seen)) .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+  }
+
+  /* Schwarze Flaeche aus zwei Haelften; ueberlappen 1px gegen einen Spalt. */
+  .pl-half { position: absolute; left: 0; right: 0; height: calc(50% + 1px); background: var(--color-ink); will-change: transform; }
+  .pl-half--top { top: 0; }
+  .pl-half--bottom { bottom: 0; }
+  .pl-inner { position: relative; display: grid; justify-items: center; gap: clamp(1.25rem, 2.5vw, 1.75rem); }
+  .pl-mark { position: relative; width: clamp(3.5rem, 6vw, 5rem); aspect-ratio: 39.4 / 45; }
+  .pl-mark__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  /* Balken wachsen von unten (Startzustand, GSAP oeffnet den Clip). */
+  .pl-mark__svg :global(path) { clip-path: inset(100% 0 0 0); }
+  .pl-mark__svg--tint :global(path) { fill: var(--color-accent); }
+  .pl-mark__shine :global(path) { fill: color-mix(in srgb, var(--color-accent), #fff 75%); clip-path: none; }
+  .pl-mark__shine {
+    --sweep: 130%;
+    -webkit-mask-image: linear-gradient(100deg, transparent 35%, #000 50%, transparent 65%);
+    mask-image: linear-gradient(100deg, transparent 35%, #000 50%, transparent 65%);
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: var(--sweep) 0;
+    mask-position: var(--sweep) 0;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+  .pl-raster img { display: block; width: auto; height: clamp(3.5rem, 6vw, 5rem); clip-path: inset(100% 0 0 0); }
+  .pl-raster--full img { height: clamp(3rem, 5vw, 4.25rem); max-width: 80vw; object-fit: contain; }
+  .pl-raster--invert img { filter: brightness(0) invert(1); }
+  .pl-word {
+    display: flex;
+    font-family: var(--font-brand);
+    font-size: clamp(0.9375rem, 0.8rem + 0.5vw, 1.25rem);
+    letter-spacing: 0.28em;
+    color: var(--color-paper);
+    white-space: nowrap;
+  }
+  .pl-word__mask { display: block; overflow: hidden; padding-block: 0.1em; }
+  .pl-word__mask > span { display: block; transform: translateY(110%); }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const el = document.querySelector<HTMLElement>('[data-preloader]');
+  const w = window as unknown as { __hvReady: boolean; __hvExit?: string };
+  const done = () => {
+    w.__hvReady = true;
+    window.dispatchEvent(new Event('hv:ready'));
+  };
+  const active = el && getComputedStyle(el).display !== 'none';
+
+  if (!el || !active) {
+    done();
+  } else {
+    try { sessionStorage.setItem('hv-seen', '1'); } catch { /* privater Modus */ }
+    // Scrollen sperren, bis die Seite freigegeben ist.
+    const root = document.documentElement;
+    root.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+
+    const q = (s: string) => el.querySelector<HTMLElement>(s)!;
+    const [top, bottom] = [...el.querySelectorAll<HTMLElement>('[data-pl-half]')];
+    const inner = q('[data-pl-inner]');
+    // SVG-Marke: Pfade einzeln; Rasterbild: das Bild als Ganzes.
+    const svgMark = el.querySelector('[data-pl-mark]');
+    const bars = svgMark ? [...svgMark.querySelectorAll('path')] : [...el.querySelectorAll('[data-pl-raster] img')];
+    const shine = el.querySelector('[data-pl-shine]');
+    const word = el.querySelector('[data-pl-word]');
+    w.__hvExit = 'split';
+
+    const EXIT = 1.6;
+    const DUR = 1.15;
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    // Logo-Moment: Balken links, rechts, dann der hohe mittlere; Wortmarke; Lichtstreif.
+    tl.to(bars, { clipPath: 'inset(0% 0 0 0)', duration: 0.9, stagger: 0.12, ease: 'expo.inOut' }, 0.1);
+    if (word) {
+      tl.to(el.querySelectorAll('[data-pl-char]'), { y: 0, duration: 0.9, stagger: 0.025 }, 0.55)
+        .fromTo(word, { letterSpacing: '0.5em' }, { letterSpacing: '0.28em', duration: 1.3 }, 0.5);
+    }
+    if (shine) tl.to(shine, { '--sweep': '-30%', duration: 0.85, ease: 'power2.inOut' }, 0.95);
+
+    // Mitte reisst auf: Haelften fahren auseinander, das Logo tritt zurueck.
+    tl.to(inner, { scale: 0.92, opacity: 0, duration: 0.5, ease: 'power2.in' }, EXIT)
+      .to(top, { yPercent: -101, duration: DUR, ease: 'power4.inOut' }, EXIT + 0.15)
+      .to(bottom, { yPercent: 101, duration: DUR, ease: 'power4.inOut' }, EXIT + 0.15);
+    // Hero startet schon unter der fahrenden Flaeche.
+    tl.add(() => { root.style.overflow = ''; done(); }, EXIT + 0.1)
+      .add(() => el.remove(), EXIT + 0.15 + DUR);
+  }
+</script>

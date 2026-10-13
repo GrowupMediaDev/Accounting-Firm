@@ -1,0 +1,427 @@
+{
+  "brand": {
+    "name": "Lindner & Kaya Steuerberater",
+    "shortName": "Lindner & Kaya",
+    "logoMark": "logo-mark.svg",
+    "tintMark": true,
+    "logoImage": "",
+    "logoImageLight": "",
+    "wordmark": "LINDNER & KAYA",
+    "wordmarkSub": "STEUERBERATER",
+    "footerWord": "LINDNER",
+    "description": "Steuerberatung für Familienunternehmen, Mittelstand und Privatvermögen in {city}. Verlässlich seit {founded}.",
+    "founded": 1987,
+    "businessType": "AccountingService"
+  },
+  "theme": {
+    "accent": "#2d6a4f",
+    "background": "#e9efe7",
+    "dark": "#101a14",
+    "light": "#ffffff",
+    "displayFont": "instrument-serif",
+    "pattern": {
+      "type": "waves",
+      "color": "",
+      "intensity": 1
+    }
+  },
+  "languages": {
+    "en": false
+  },
+  "seo": {
+    "url": "https://example.com",
+    "title": "Steuerberater {city} – {name}",
+    "description": "Steuerberater in {city} für Familienunternehmen und Mittelstand: Jahresabschluss, Unternehmensnachfolge und Vermögen, seit 1987 persönlich betreut.",
+    "ogImage": "/og-default.jpg"
+  },
+  "contact": {
+    "legalName": "Lindner & Kaya Steuerberater PartG mbB",
+    "phone": "+49 89 5532 0740",
+    "email": "kanzlei@lindner-kaya.example",
+    "street": "Prinzregentenstraße 61",
+    "postalCode": "81675",
+    "city": "München",
+    "region": "Bayern",
+    "country": "DE",
+    "areaServed": [
+      "München"
+    ]
+  },
+  "hours": {
+    "days": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "open": 8,
+    "close": 17,
+    "timeZone": "Europe/Berlin"
+  },
+  "social": {
+    "whatsapp": "#",
+    "tiktok": "#",
+    "facebook": "#",
+    "instagram": "#",
+    "linkedin": "#"
+  },
+  "rating": {
+    "show": true,
+    "score": "4,9",
+    "count": 132,
+    "source": "Google"
+  },
+  "stats": [
+    {
+      "value": "{years} Jahre",
+      "label": "Kanzleigeschichte in {city}"
+    },
+    {
+      "value": "600+",
+      "label": "Mandanten aus Mittelstand und Familie"
+    },
+    {
+      "value": "24",
+      "label": "Mitarbeitende"
+    },
+    {
+      "value": "5",
+      "label": "Steuerberater im Team"
+    }
+  ],
+  "nav": {
+    "start": "Start",
+    "kanzlei": "Kanzlei",
+    "leistungen": "Leistungen",
+    "team": "Team",
+    "aktuelles": "Aktuelles",
+    "cta": "Termin vereinbaren"
+  },
+  "hero": {
+    "eyebrow": "Steuerberater in {city} seit {founded}",
+    "title": [
+      "Werte, die",
+      "bleiben"
+    ],
+    "text": "Wir beraten Familienunternehmen, Mittelstand und Privatpersonen in {city}: beständig, vorausschauend und mit Blick auf die nächste Generation.",
+    "primaryCta": "Erstgespräch vereinbaren",
+    "secondaryCta": "Leistungen ansehen",
+    "note": "Erstgespräch kostenfrei und unverbindlich.",
+    "layout": "cutout",
+    "image": "hero-partners.png",
+    "imageAlt": "Aylin Kaya und Stefan Lindner",
+    "photo": "hero-office.jpg",
+    "photoAlt": "Aylin Kaya und Stefan Lindner im Gespräch in der Kanzlei",
+    "photoFocus": "80% 50%",
+    "availabilityLabel": "Erreichbarkeit",
+    "availabilityText": "{open}–{close} Uhr persönlich für Sie da.",
+    "avatars": [
+      "avatar-1.png",
+      "avatar-2.png",
+      "avatar-3.png"
+    ],
+    "deadlineTitle": "Fristen im Blick",
+    "deadlineText": "Voranmeldungen, Erklärungen, Vorauszahlungen: jede Frist geplant, bevor sie drängt.",
+    "deadlineImage": "papierlos.jpg",
+    "deadlineImageAlt": "Handwerksmeister in seiner Werkstatt",
+    "deadlineItem": "UStVA",
+    "deadlineStart": "In Arbeit",
+    "deadlineSteps": [
+      "Vorbereitet",
+      "Geprüft",
+      "Übermittelt"
+    ]
+  },
+  "kanzlei": {
+    "eyebrow": "Die Kanzlei",
+    "heading": "Beratung, die *Generationen* verbindet",
+    "lead": "Viele unserer Mandanten begleiten wir seit Jahrzehnten, oft schon in zweiter Generation. Wir kennen ihre Unternehmen, ihre Familien und ihre Ziele.",
+    "cards": [
+      {
+        "title": "Fester Ansprechpartner",
+        "text": "Sie sprechen immer mit derselben Person, die Ihre Unterlagen und Ziele kennt. Keine Warteschleife, keine Erklärungen von vorn."
+      },
+      {
+        "title": "Transparente Honorare",
+        "text": "Sie wissen vorab, was die Betreuung kostet: nach Gebührenordnung oder als vereinbarte Pauschale, schriftlich festgehalten."
+      }
+    ],
+    "image": "kanzlei-laptop.jpg",
+    "imageAlt": "Steuerberater arbeitet konzentriert am Laptop im Büro"
+  },
+  "leistungen": {
+    "eyebrow": "Unsere Leistungen",
+    "heading": "Beratung für Unternehmen und *Vermögen*",
+    "lead": "Von der Gründung über die laufende Buchhaltung bis zum Jahresabschluss, für Unternehmen wie für Privatpersonen. Wir übernehmen die Pflichten und behalten die Fristen im Blick.",
+    "scopeLabel": "Leistungsumfang",
+    "cta": "Beratung anfragen",
+    "items": [
+      {
+        "title": "Steuerberatung",
+        "text": "Steuererklärungen für Unternehmen und Privatpersonen, sorgfältig vorbereitet und fristgerecht abgegeben. Wir prüfen Ihre Bescheide und vertreten Sie gegenüber dem Finanzamt.",
+        "points": [
+          "Betriebliche Steuererklärungen",
+          "Einkommensteuer für Privatpersonen",
+          "Prüfung von Steuerbescheiden"
+        ],
+        "image": "leistung-jahresabschluss.jpg",
+        "alt": "Steuerberaterin geht mit einer Mandantin die Unterlagen durch"
+      },
+      {
+        "title": "Finanzbuchhaltung",
+        "text": "Laufende Buchhaltung mit DATEV, digital oder klassisch mit Pendelordner. Sie erhalten jeden Monat verlässliche Zahlen.",
+        "points": [
+          "Kontierung und Buchführung",
+          "Umsatzsteuer-Voranmeldung",
+          "Monatliche Auswertungen (BWA)"
+        ],
+        "image": "leistung-buchhaltung.jpg",
+        "alt": "Buchhalter arbeitet an zwei Monitoren mit Auswertungen"
+      },
+      {
+        "title": "Lohnbuchhaltung",
+        "text": "Pünktliche Abrechnungen für Ihr Team, inklusive aller Meldungen an Krankenkassen, Finanzamt und Berufsgenossenschaft.",
+        "points": [
+          "Lohn- und Gehaltsabrechnung",
+          "Meldungen an die Sozialversicherung",
+          "Lohnsteueranmeldung"
+        ],
+        "image": "leistung-lohnbuchhaltung.jpg",
+        "alt": "Lohnbuchhalterin bespricht Abrechnungen mit einem Unternehmer"
+      },
+      {
+        "title": "Jahresabschluss",
+        "text": "Bilanz oder Einnahmen-Überschuss-Rechnung, termingerecht erstellt und verständlich erklärt. Im Abschlussgespräch blicken wir gemeinsam nach vorn.",
+        "points": [
+          "Bilanz sowie Gewinn- und Verlustrechnung",
+          "Einnahmen-Überschuss-Rechnung",
+          "Abschlussgespräch mit Ausblick"
+        ],
+        "image": "leistung-abschluss.jpg",
+        "alt": "Steuerberater erklärt einer Mandantin den Jahresabschluss"
+      },
+      {
+        "title": "Unternehmensberatung",
+        "text": "Gründung, Rechtsformwahl, Finanzierung oder Nachfolge: Wir rechnen Ihre Optionen durch und begleiten Sie bei der Umsetzung.",
+        "points": [
+          "Existenzgründung und Rechtsformwahl",
+          "Finanzierung und Liquiditätsplanung",
+          "Unternehmensnachfolge"
+        ],
+        "image": "leistung-lohn.jpg",
+        "alt": "Beratungsgespräch mit Handschlag am Besprechungstisch"
+      }
+    ]
+  },
+  "ansatz": {
+    "show": true,
+    "eyebrow": "Unser Ansatz",
+    "heading": "Zahlen sind erst der *Anfang* der Beratung",
+    "lead": "Die meisten Unternehmer bekommen einmal im Monat eine BWA und wissen danach genauso viel wie vorher. Wir gehen sie mit Ihnen durch und übersetzen die Zahlen in Entscheidungen: Einstellung, Investition, Preiserhöhung.",
+    "signalsLabel": "Wir melden uns, wenn uns auffällt:",
+    "signals": [
+      {
+        "label": "Sinkende Margen",
+        "bars": [
+          92,
+          80,
+          68,
+          54,
+          38
+        ]
+      },
+      {
+        "label": "Wachsende Forderungen",
+        "bars": [
+          34,
+          46,
+          58,
+          72,
+          92
+        ]
+      },
+      {
+        "label": "Steuernachzahlung im nächsten Quartal",
+        "bars": [
+          30,
+          30,
+          30,
+          30,
+          96
+        ]
+      }
+    ],
+    "foot": "Nicht erst beim Jahresabschluss.",
+    "cta": "Erstgespräch vereinbaren",
+    "image": "ansatz.jpg",
+    "imageAlt": "Steuerberaterin bespricht die Monatsauswertung mit einer Mandantin",
+    "noteValue": "Rohertrag −4 %",
+    "noteText": "ggü. Vorquartal",
+    "noteTag": "Nächster Schritt",
+    "noteAction": "Preise für Q3 prüfen"
+  },
+  "warum": {
+    "show": true,
+    "eyebrow": "Warum wir",
+    "heading": "Worauf sich unsere Mandanten *verlassen*",
+    "detailLabel": "Was das heißt",
+    "items": [
+      {
+        "title": "Branchenwissen",
+        "text": "Handwerk, Heilberufe, Immobilien oder Onlinehandel: Wir kennen die steuerlichen Besonderheiten Ihrer Branche.",
+        "detail": "Sie bekommen Hinweise, die zu Ihrem Geschäft passen, nicht nur allgemeine Regeln.",
+        "image": "warum-ansprechpartner.jpg",
+        "alt": "Steuerberaterin im Telefonat mit einem Mandanten"
+      },
+      {
+        "title": "Digitale Zusammenarbeit",
+        "text": "Belege digital übermitteln, Auswertungen online abrufen. Wir arbeiten mit DATEV Unternehmen online.",
+        "detail": "Kein Postversand, keine Wartezeit. Und wer seine Unterlagen lieber persönlich vorbeibringt, kann das weiterhin tun.",
+        "image": "warum-digital.jpg",
+        "alt": "Steuerberaterin im Videogespräch mit einem Mandanten"
+      },
+      {
+        "title": "Persönlich vor Ort",
+        "text": "Termine in unserer Kanzlei, per Video oder bei Ihnen im Unternehmen. Wie es für Sie am besten passt.",
+        "detail": "Gerade bei großen Entscheidungen sitzen wir gern mit Ihnen an einem Tisch.",
+        "image": "warum-vor-ort.jpg",
+        "alt": "Steuerberater bespricht Unterlagen mit einer Café-Inhaberin in ihrem Café"
+      },
+      {
+        "title": "Wir melden uns zuerst",
+        "text": "Fristen, Vorauszahlungen, Auffälligkeiten in den Zahlen: Sie hören es von uns, bevor es zum Problem wird.",
+        "detail": "Keine Überraschungen vom Finanzamt, sondern Zeit zum Reagieren.",
+        "image": "warum-melden.jpg",
+        "alt": "Steuerberaterin ruft eine Mandantin an, vor ihr Auswertung und Kalender mit markierter Frist"
+      }
+    ]
+  },
+  "team": {
+    "show": true,
+    "eyebrow": "Unser Team",
+    "heading": "Erfahrung, die man *kennt*",
+    "button": "Persönlich kennenlernen",
+    "grayscale": false,
+    "members": [
+      {
+        "name": "Stefan Lindner",
+        "role": "Steuerberater, Partner",
+        "image": "team-hartmann.png",
+        "linkedin": "#",
+        "focus": "38% 20%"
+      },
+      {
+        "name": "Aylin Kaya",
+        "role": "Steuerberaterin, Partnerin",
+        "image": "team-vogt.jpg",
+        "linkedin": "#",
+        "focus": "50% 20%"
+      },
+      {
+        "name": "Markus Weber",
+        "role": "Steuerberater",
+        "image": "team-keller.png",
+        "linkedin": "#",
+        "focus": "50% 20%"
+      }
+    ]
+  },
+  "testimonials": {
+    "show": true,
+    "eyebrow": "Mandantenstimmen",
+    "heading": "Was unsere Mandanten über uns *sagen*",
+    "lead": "Unternehmen, Selbstständige und Privatpersonen aus {city} und Umgebung. Seit {founded}.",
+    "items": [
+      {
+        "quote": "Wir hatten vorher zwei Dienstleister für Buchhaltung und Lohn und ständig Rückfragen zwischen beiden. Jetzt läuft alles über eine Stelle, und ich bekomme meine BWA am 10., nicht irgendwann.",
+        "name": "Thomas Berger",
+        "role": "Geschäftsführer, Berger Elektrotechnik GmbH"
+      },
+      {
+        "quote": "Beim Wechsel mitten im Jahr hatte ich mit Chaos gerechnet. Die Übergabe lief komplett über die Kanzlei, ich musste nur unterschreiben.",
+        "name": "Sandra Wolff",
+        "role": "Inhaberin, Wolff Innenarchitektur"
+      },
+      {
+        "quote": "Endlich jemand, der mir die Zahlen erklärt, statt sie mir nur zu schicken. Die Quartalsgespräche sind für mich inzwischen fester Termin.",
+        "name": "Jonas Albers",
+        "role": "Gründer, Albers Digital UG"
+      }
+    ]
+  },
+  "faq": {
+    "show": true,
+    "eyebrow": "Häufige Fragen",
+    "heading": "Antworten auf das, was Mandanten *fragen*",
+    "contactPerson": "Aylin Kaya",
+    "contactTitle": "Noch unsicher?",
+    "contactText": "Das Erstgespräch ist unverbindlich und kostenfrei. Wir hören uns Ihre Situation an und sagen ehrlich, ob wir passen.",
+    "contactCta": "Erstgespräch vereinbaren",
+    "items": [
+      {
+        "q": "Was kostet die Betreuung?",
+        "a": "Steuerberater rechnen nach der Steuerberatervergütungsverordnung (StBVV) ab. Für laufende Leistungen wie Buchhaltung und Lohn vereinbaren wir auf Wunsch eine monatliche Pauschale. In beiden Fällen nennen wir Ihnen die Kosten vorab und halten sie schriftlich fest."
+      },
+      {
+        "q": "Für wen arbeiten Sie?",
+        "a": "Für Familienunternehmen und den Mittelstand, für Unternehmerfamilien und ihr Privatvermögen. Viele Mandate begleiten wir über mehrere Generationen."
+      },
+      {
+        "q": "Wie läuft ein Kanzleiwechsel ab?",
+        "a": "Sie kündigen bei Ihrer bisherigen Kanzlei, den Rest übernehmen wir: Datenübernahme aus DATEV, Abstimmung offener Fristen und Übergabe der Unterlagen. Ein Wechsel ist auch mitten im Jahr möglich."
+      },
+      {
+        "q": "Muss ich meine Buchhaltungssoftware wechseln?",
+        "a": "In den meisten Fällen nicht. Wir arbeiten mit DATEV und binden gängige Programme und Bankkonten an. Wenn ein Wechsel sinnvoll ist, sagen wir Ihnen das und begleiten die Umstellung."
+      },
+      {
+        "q": "Betreuen Sie auch Mandanten außerhalb von {city}?",
+        "a": "Ja. Durch die digitale Zusammenarbeit betreuen wir Mandanten in ganz Deutschland. Persönliche Termine finden in unserer Kanzlei in {city} oder per Video statt."
+      },
+      {
+        "q": "Was brauche ich für das Erstgespräch?",
+        "a": "Nichts außer etwas Zeit. Hilfreich sind der letzte Jahresabschluss oder die letzte BWA, bei Privatpersonen der letzte Steuerbescheid."
+      }
+    ]
+  },
+  "news": {
+    "show": true,
+    "eyebrow": "Aktuelles",
+    "heading": "Steuerthemen, die für Ihr Unternehmen *zählen*",
+    "lead": "Kurz erklärt: was sich ändert, wen es betrifft und was Sie jetzt tun sollten.",
+    "items": [
+      {
+        "title": "E-Rechnungspflicht: Was jetzt auf Unternehmen zukommt",
+        "text": "Seit 2025 müssen Unternehmen E-Rechnungen empfangen können. Für den Versand laufen Übergangsfristen. Was Sie bis wann umstellen müssen.",
+        "image": "news-erechnung.jpg",
+        "alt": "Handwerksmeister prüft eine Rechnung am Laptop in seinem Werkstattbüro",
+        "href": ""
+      },
+      {
+        "title": "GmbH oder UG: die Rechnung hinter der Entscheidung",
+        "text": "Stammkapital, Haftung, laufende Kosten und Außenwirkung. Wir rechnen beide Varianten an einem konkreten Beispiel durch.",
+        "image": "news-gmbh-ug.jpg",
+        "alt": "Zwei Gründer vergleichen Unterlagen und Zahlen",
+        "href": ""
+      }
+    ]
+  },
+  "cta": {
+    "heading": "Ihr Unternehmen in *guten Händen*",
+    "text": "Wir klären, wo Sie stehen, was Sie brauchen und was die Betreuung kostet. Danach entscheiden Sie in Ruhe.",
+    "button": "Erstgespräch anfragen",
+    "facts": [
+      "Kostenfrei und unverbindlich",
+      "{days}, {open}–{close} Uhr erreichbar",
+      "Kanzlei, Video oder Telefon"
+    ],
+    "mailSubject": "Anfrage Erstgespräch",
+    "mailBody": "Guten Tag,\n\nich interessiere mich für ein unverbindliches Erstgespräch.\n\nName:\nTelefon:\nUnternehmen / Tätigkeit:\nWorum geht es:\n\nViele Grüße",
+    "handGiving": "hand-giving.png",
+    "handReceiving": "hand-receiving.png"
+  },
+  "footer": {
+    "credit": ""
+  }
+}

@@ -1,43 +1,40 @@
-// Zentrale Site- und Kontaktdaten. EINZIGE Quelle. Nie in eine .md kopieren,
-// nie in mehreren Dateien wiederholen. Pro Projekt die TODO-Werte ersetzen.
+// Site- und Kontaktdaten, abgeleitet aus dem aktiven Kanzlei-Profil (config/firm.ts).
+// Hier steht KEIN Literal einer Kanzlei: Werte werden im Konfigurator gepflegt.
+
+import { firm, fill } from './firm';
 
 export const site = {
-  name: 'Hartmann & Vogt Steuerberatung',
+  name: firm.brand.name,
+  shortName: firm.brand.shortName,
   // Schema.org-Typ: Steuerkanzlei = AccountingService (Untertyp von LocalBusiness).
-  businessType: 'AccountingService',
-  tagline: 'Steuerberatung für Mittelstand, Gründer und Selbstständige in Düsseldorf. Digital, persönlich, zum festen Monatshonorar.',
-  url: 'https://example.com',        // echte Domain pro Projekt
+  businessType: firm.brand.businessType,
+  tagline: fill(firm.brand.description),
+  // Gruendungsjahr: Quelle fuer "Jahre Erfahrung" und "Seit …".
+  founded: firm.brand.founded,
+  url: firm.seo.url,
   defaultLocale: 'de' as const,
   locales: ['de', 'en'] as const,
-  ogImage: '/og-default.jpg',        // Default-OG-Bild, pro Projekt ersetzen
+  ogImage: firm.seo.ogImage,
 };
 
-// NAP = Name, Address, Phone. Einzige Quelle fuer Kontaktdaten.
-// Wird auch vom LocalBusiness-Schema referenziert, nicht dort dupliziert.
+// NAP = Name, Address, Phone. Wird auch vom LocalBusiness-Schema referenziert.
+// Schema-Reichweite <= Content-Reichweite: areaServed nur, was die Texte bewerben.
 export const nap = {
-  legalName: 'TODO Hartmann & Vogt Steuerberatungsgesellschaft',
-  phone: '+49 000 0000000',
-  email: 'office@example.com',
-  street: 'TODO Strasse 1',
-  postalCode: '00000',
-  city: 'Düsseldorf',
-  region: 'Nordrhein-Westfalen',
-  country: 'DE',
-  // Gebiet, das der Dienstleister bedient. Schema-Reichweite <= Content-Reichweite:
-  // nur eintragen, was in den Texten auch wirklich beworben wird.
-  areaServed: [
-    { type: 'City', name: 'Düsseldorf' },
-    // { type: 'Country', name: 'Deutschland' },
-  ],
+  ...firm.contact,
+  areaServed: firm.contact.areaServed.map((name) => ({ type: 'City', name })),
 };
 
-// Social-Profile (Footer). TODO: echte URLs vom Mandanten; '#' = noch offen.
-export const social = [
-  { key: 'whatsapp', label: 'WhatsApp', href: '#' },
-  { key: 'tiktok', label: 'TikTok', href: '#' },
-  { key: 'facebook', label: 'Facebook', href: '#' },
-  { key: 'instagram', label: 'Instagram', href: '#' },
-  { key: 'linkedin', label: 'LinkedIn', href: '#' },
-] as const;
+// Erreichbarkeit (Live-Status im Hero). Wochentage nach JS-Zaehlung (1 = Montag),
+// Zeiten in der Zeitzone der Kanzlei.
+export const hours = firm.hours;
+
+// Social-Profile (Footer). Leere Eintraege werden nicht angezeigt.
+const socialLabels = { whatsapp: 'WhatsApp', tiktok: 'TikTok', facebook: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn' } as const;
+export const social = (Object.keys(socialLabels) as (keyof typeof socialLabels)[])
+  .filter((key) => firm.social[key])
+  .map((key) => ({ key, label: socialLabels[key], href: firm.social[key] }));
+
+/** tel:-Link aus der Telefonnummer. */
+export const telHref = `tel:${firm.contact.phone.replace(/[^+\d]/g, '')}`;
 
 export type Locale = (typeof site.locales)[number];

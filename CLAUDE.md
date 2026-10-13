@@ -8,6 +8,17 @@ nicht die Ablage. Details liegen in den verlinkten Files.
 
 ---
 
+## Kanzlei-Vorlage (Outreach)
+
+Dieses Projekt ist eine Website-Vorlage für Steuerkanzleien. Alles Kanzlei-
+spezifische steht in **einem Profil** pro Kanzlei: `src/firms/<slug>/`.
+Neue Kanzlei-Website bauen → Skill **`/new-firm-site`**
+(`.claude/skills/new-firm-site/`: Ablauf + Referenz zu Architektur,
+Designsystem, Motion, Texten und Bildern). Werkzeuge: `npm run new-firm`,
+`npm run check-firm`, Konfigurator unter `/configurator` (nur `npm run dev`).
+
+---
+
 ## Oberste Regel
 
 **Jede Tatsache hat genau eine Quelle. Alles andere referenziert sie.**

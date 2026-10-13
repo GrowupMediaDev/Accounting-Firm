@@ -3,6 +3,7 @@
 // DE ist Pflicht, EN optional (Deutsch zuerst, Uebersetzung spaeter).
 
 import type { Locale } from './site';
+import { hasEnglish } from './firm';
 
 export type SchemaType =
   | 'LocalBusiness'    // Startseite + Kernseiten
@@ -23,7 +24,8 @@ export interface RouteDef {
 
 // Bewusst fast leer. Seitenliste ist projektspezifisch, hier NICHT vordefinieren.
 const routeDefs = {
-  home: { de: '/', indexable: true, schema: 'LocalBusiness' },
+  // EN-Startseite nur, wenn das Kanzlei-Profil Englisch eingeschaltet hat.
+  home: { de: '/', ...(hasEnglish ? { en: '/en/' } : {}), indexable: true, schema: 'LocalBusiness' },
   // Interne Design-System-Uebersicht, nicht indexieren.
   styleguide: { de: '/styleguide/', indexable: false, schema: 'None' },
   // Rechtstexte: noindex, bis die echten Texte vom Mandanten vorliegen.
