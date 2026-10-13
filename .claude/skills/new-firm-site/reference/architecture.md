@@ -65,7 +65,7 @@ src/components/sections/*.astro       one file per section, read only from the p
 
 ## Configurator (dev only)
 
-`npm run dev`, then `http://localhost:4380/configurator` (port per your dev server). An Astro integration (`integrations/configurator/index.mjs`) adds Vite middleware: the UI (`ui/index.html`, `app.js`, `app.css`) plus an API under `/__cfg/*` (state, firm read/write incl. `?lang=en`, duplicate, activate, images list, upload, pattern tiles). It writes the same files you would edit by hand; the preview iframe reloads via Vite on save. Nothing of it reaches the build.
+`npm run dev`, then `http://localhost:4321/configurator` (Astro's default port; use the port the dev server prints). An Astro integration (`integrations/configurator/index.mjs`) adds Vite middleware: the UI (`ui/index.html`, `app.js`, `app.css`) plus an API under `/__cfg/*` (state, firm read/write incl. `?lang=en`, duplicate, activate, images list, upload, pattern tiles). It writes the same files you would edit by hand; the preview iframe reloads via Vite on save. Nothing of it reaches the build.
 
 - `ui/schema.js` describes every editable field (types: text, textarea, rich, number, range, color, select, toggle, image, images, lines, numbers, days, person, pattern, list).
 - `ui/i18n.js` translates the German labels to English (the UI is English-only).

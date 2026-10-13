@@ -2,11 +2,12 @@
 // keine Handliste. Gibt die Stylesheet-Zeile aus (Tabellen-Ansicht via sitemap.xsl).
 // EN-URLs erscheinen nur, wenn ein EN-Slug existiert.
 import type { APIRoute } from 'astro';
-import { site } from '../config/site';
+import { site, previewMode } from '../config/site';
 import { routes, localizedPath, hasEN, type PageKey } from '../config/routes';
 
 export const GET: APIRoute = () => {
-  const keys = (Object.keys(routes) as PageKey[]).filter((k) => routes[k].indexable);
+  // Vorschau-Build (NOINDEX=1): leere Sitemap.
+  const keys = previewMode ? [] : (Object.keys(routes) as PageKey[]).filter((k) => routes[k].indexable);
 
   const entries: string[] = [];
   for (const k of keys) {

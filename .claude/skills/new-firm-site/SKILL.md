@@ -13,6 +13,7 @@ Read these before you start, they are short and they are the rules:
 - `reference/design-system.md`: colours (and how they are derived), type, layout, components.
 - `reference/motion.md`: preloader, logo, hero entrance, shader, scroll reveals. What is automatic, what depends on the profile.
 - `reference/content-and-images.md`: copy rules for German accounting firms, image style and prompts.
+- `reference/publishing.md`: Cloudflare Pages per firm, outreach preview vs. live, `NOINDEX`.
 
 ## Purpose (why this exists)
 
@@ -65,9 +66,16 @@ FIRM=<slug> npm run build             # seo-check + static build into dist/
 Then look at it: `npm run dev` (the profile is active) at 1440, 768 and 390 px wide, with the preloader forced via `/?intro`. Verify: the hero headline fits at 360 px, no horizontal scroll, the logo doesn't collide with the header buttons, headings break sensibly, every image matches its section.
 
 ### 8. Report
-Tell the user, in plain words: what you built, what came from their site vs. what is placeholder, every remaining ⚠ from `check-firm`, and what needs the firm's input (legal texts, real testimonials, photos). Do **not** commit or deploy unless asked.
+Tell the user, in plain words: what you built, what came from their site vs. what is placeholder, every remaining ⚠ from `check-firm`, and what needs the firm's input (legal texts, real testimonials, photos).
+
+### 9. Commit, publish (only when asked)
+- Pull first (`git pull --ff-only`); teammates push to `main` too.
+- Commit only when the user asks ("save" means save files, not commit). One commit per firm is fine: `Add firm <slug>: <Name>`.
+- Publishing an outreach preview: `reference/publishing.md`. Previews always use `NOINDEX=1`.
 
 ## Hard rules
+- Ask before anything that costs money (e.g. the Gemini API) and before publishing or sending anything to a prospect.
+- Work step by step and report; don't bundle unrelated template changes into a firm build.
 - One source of truth: firm facts only in `firm.json`; never hard-code a firm detail in a component.
 - No unrealistic claims (guaranteed savings, "24 h response", fixed prices). Fees: StBVV or agreed flat fee (Pauschale), stated in writing.
 - No em dash (—) in copy; the German en dash (–) is fine. Correct German capitalisation; headings are not Title Case.

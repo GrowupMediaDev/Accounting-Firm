@@ -34,6 +34,12 @@ export const social = (Object.keys(socialLabels) as (keyof typeof socialLabels)[
   .filter((key) => firm.social[key])
   .map((key) => ({ key, label: socialLabels[key], href: firm.social[key] }));
 
+// Vorschau-Build (NOINDEX=1): Outreach-Vorschauen einer echten Kanzlei duerfen nie
+// in Suchmaschinen landen. Alle Seiten noindex, robots.txt sperrt alles, Sitemap leer.
+declare const process: { env: Record<string, string | undefined> } | undefined;
+const noindexEnv = typeof process !== 'undefined' ? process.env.NOINDEX : undefined;
+export const previewMode: boolean = noindexEnv === '1' || noindexEnv === 'true';
+
 /** tel:-Link aus der Telefonnummer. */
 export const telHref = `tel:${firm.contact.phone.replace(/[^+\d]/g, '')}`;
 

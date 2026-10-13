@@ -1,7 +1,7 @@
 ---
 // Basis-Layout: nur Kopf-Plumbing (Canonical, hreflang, OG, Twitter) + <slot/>.
 // KEIN festes Design, kein Header/Footer erzwungen. Das kommt pro Projekt.
-import { site } from '../config/site';
+import { site, previewMode } from '../config/site';
 import { routes, localizedPath, hasEN, type PageKey } from '../config/routes';
 import type { Locale } from '../config/site';
 import '@fontsource/instrument-serif/latin-400.css';
@@ -39,7 +39,9 @@ const enHref = hasEN(pageKey) ? new URL(localizedPath(pageKey, 'en'), site.url).
 const ogImg = new URL(ogImage ?? site.ogImage, site.url).href;
 
 // hreflang nur, wenn EN existiert UND die Seite indexierbar ist.
-const showHreflang = hasEN(pageKey) && route.indexable;
+// Vorschau-Build (NOINDEX=1): nichts indexieren, kein Canonical/hreflang.
+const indexable = route.indexable && !previewMode;
+const showHreflang = hasEN(pageKey) && indexable;
 ---
 <!doctype html>
 <html lang={locale} data-font={font} data-hero={heroPhoto ? 'photo' : undefined}>
@@ -71,9 +73,9 @@ const showHreflang = hasEN(pageKey) && route.indexable;
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    {route.indexable
+    {indexable
       ? <link rel="canonical" href={canonical} />
-      : <meta name="robots" content="noindex, follow" />}
+      : <meta name="robots" content={previewMode ? 'noindex, nofollow' : 'noindex, follow'} />}
 
     {showHreflang && [
       <link rel="alternate" hreflang="de" href={deHref} />,
